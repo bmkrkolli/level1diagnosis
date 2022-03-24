@@ -53,10 +53,9 @@
       slack:
         token: "{{ slack_token }}"
         attachments:
-          - text: "{{ hosts | map('extract', hostvars) | map(attribute='job_msg') }}" 
+          - text: "{{ job_msg }}" 
             title: Launched {{ tower_job_id }}
         channel: "automation"
         domain: "app.slack.com"
-      run_once: true
-      delegate_to: localhost
       ignore_errors: true
+      when: job_msg is defined
