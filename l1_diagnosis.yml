@@ -24,14 +24,14 @@
     - name: "Set job_msg"
       set_fact:
         job_msg: >-
-          "\"{{ inventory_hostname }}\": \{ {{ win_l1_info.stdout | to_yaml }} \}"
+          ""{{ inventory_hostname }}": { {{ win_l1_info.stdout | to_yaml }} }"
       when: os_type == "Windows"
       ignore_errors: true
 
     - name: "Set job_msg"
       set_fact:
         job_msg: >-
-          "\"{{ inventory_hostname }}\": \{ {{ linux_l1_info.stdout_lines | to_yaml }} \}"
+          ""{{ inventory_hostname }}": { {{ linux_l1_info.stdout_lines | to_yaml }} }"
       when: os_type != "Windows"
       ignore_errors: true
 
