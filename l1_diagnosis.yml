@@ -26,7 +26,6 @@
         job_msg: >-
           {{ os_type }} Level 1 Diagnosis for {{ inventory_hostname }}
           {{ win_l1_info.stdout | to_yaml }}
-        job_rc: Unresolved
       when: os_type == "Windows"
       ignore_errors: true
 
@@ -35,17 +34,16 @@
         job_msg: >-
           {{ os_type }} Level 1 Diagnosis for {{ inventory_hostname }}
           {{ linux_l1_info.stdout_lines | to_yaml }}
-        job_rc: Unresolved
       when: os_type != "Windows"
       ignore_errors: true
 
     - name: Set facts for event acknowledgement
       set_fact:
         slack_token: "{{ lookup('env','s_token') }}"
-        auth_token: "{{ lookup('env','a_token') }}"
       run_once: true
       delegate_to: localhost
       ignore_errors: true
+      no_log: true
 
     - name: Send message to slack
       slack:
@@ -57,4 +55,10 @@
         domain: "app.slack.com"
       run_once: true
       delegate_to: localhost
+      ignore_errors: true
+
+    - name: stats
+      set_stats: 
+        data:
+          csvformat: "{{ job_msg }}"
       ignore_errors: true
