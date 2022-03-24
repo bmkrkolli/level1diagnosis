@@ -24,14 +24,14 @@
     - name: "Set job_msg"
       set_fact:
         job_msg: >-
-          "{{ inventory_hostname }}" : { {{ win_l1_info.stdout }} }
+          "{{ inventory_hostname }}": {{ win_l1_info.stdout | to_json }}
       when: os_type == "Windows"
       ignore_errors: true
 
     - name: "Set job_msg"
       set_fact:
         job_msg: >-
-          "{{ inventory_hostname }}": { {{ linux_l1_info.stdout }} }
+          "{{ inventory_hostname }}": {{ linux_l1_info.stdout | to_json }}
       when: os_type != "Windows"
       ignore_errors: true
 
@@ -53,7 +53,7 @@
       slack:
         token: "{{ slack_token }}"
         attachments:
-          - text: "{{ stats }}" 
+          - text: "{{ job_msg }}" 
             title: Launched {{ tower_job_id }}
         channel: "automation"
         domain: "app.slack.com"
