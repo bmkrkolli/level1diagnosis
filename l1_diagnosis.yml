@@ -1,0 +1,40 @@
+---
+# Level 1 Diagnosis for Windows and Linux
+- hosts: all
+  vars:
+    os_type: "{{ ansible_facts['os_family'] }}"
+  tasks:
+    - name: "Python Level 1 Diagnosis"
+      l1diagnosis:
+      register: l1_info
+      ignore_errors: true
+
+    - name: "win_level1diagnosis Level 1 Diagnosis"
+      win_level1diagnosis: 
+      register: win_l1_info
+      when: os_type == "Windows"
+      ignore_errors: true
+
+    - name: "level1diagnosis Level 1 Diagnosis"
+      level1diagnosis:
+      register: linux_l1_info
+      when: os_type != "Windows"
+      ignore_errors: true
+
+    - name: "Set job_msg"
+      set_fact:
+        job_msg: >-
+          {{ os_type }} Level 1 Diagnosis for {{ inventory_hostname }}
+          {{ win_l1_info.stdout | to_yaml }}
+        job_rc: Unresolved
+      when: os_type == "Windows"
+      ignore_errors: true
+
+    - name: "Set job_msg"
+      set_fact:
+        job_msg: >-
+          {{ os_type }} Level 1 Diagnosis for {{ inventory_hostname }}
+          {{ linux_l1_info.stdout_lines | to_yaml }}
+        job_rc: Unresolved
+      when: os_type != "Windows"
+      ignore_errors: true
