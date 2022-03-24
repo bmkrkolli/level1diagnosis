@@ -53,7 +53,7 @@
       slack:
         token: "{{ slack_token }}"
         attachments:
-          - text: "{{ job_msg }}" 
+          - text: "{{ hosts | map('extract', hostvars) | map(attribute='job_msg') }}" 
             title: Launched {{ tower_job_id }}
         channel: "automation"
         domain: "app.slack.com"
