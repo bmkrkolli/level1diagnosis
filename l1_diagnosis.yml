@@ -24,14 +24,14 @@
     - name: "Set job_msg"
       set_fact:
         job_msg: >-
-          ""{{ inventory_hostname }}": { {{ win_l1_info.stdout | to_yaml }} }"
+          "{{ inventory_hostname }}" : { {{ win_l1_info.stdout | to_yaml }} }
       when: os_type == "Windows"
       ignore_errors: true
 
     - name: "Set job_msg"
       set_fact:
         job_msg: >-
-          ""{{ inventory_hostname }}": { {{ linux_l1_info.stdout_lines | to_yaml }} }"
+          "{{ inventory_hostname }}": { {{ linux_l1_info.stdout_lines | to_yaml }} }
       when: os_type != "Windows"
       ignore_errors: true
 
@@ -43,20 +43,20 @@
       ignore_errors: true
       no_log: true
 
+    - name: stats
+      set_stats: 
+        data:
+          stats: "{{ job_msg }}"
+      ignore_errors: true
+
     - name: Send message to slack
       slack:
         token: "{{ slack_token }}"
         attachments:
-          - text: "{{ job_msg }}" 
+          - text: "{{ stats }}" 
             title: Launched {{ tower_job_id }}
         channel: "automation"
         domain: "app.slack.com"
       run_once: true
       delegate_to: localhost
-      ignore_errors: true
-
-    - name: stats
-      set_stats: 
-        data:
-          csvformat: "{{ job_msg }}"
       ignore_errors: true
