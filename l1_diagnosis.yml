@@ -43,12 +43,6 @@
       ignore_errors: true
       no_log: true
 
-    - name: stats
-      set_stats: 
-        data:
-          stats: "{{ job_msg }}"
-      ignore_errors: true
-
     - name: Send message to slack
       slack:
         token: "{{ slack_token }}"
@@ -59,3 +53,9 @@
         domain: "app.slack.com"
       ignore_errors: true
       when: job_msg is defined
+
+    - name: stats
+      set_stats: 
+        data:
+          stats: "{{ job_msg }}"
+      ignore_errors: true
