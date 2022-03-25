@@ -66,21 +66,20 @@ try:
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
-  result['msg'] = HN #+ " , " + OS + " , " + KERNEL + " , " + LBT + " , " + CPU + " , " + MEM + " , " + CPUS + " , " + TMEM + " , " + SWAP
-  result['rc'] = 0
+  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL}
 #  result['stdout'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
 #  result['stdout_lines'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
   result['stderr'] = ""
-#  result['stderr_lines'] = ""
+  result['stderr_lines'] = ""
 except:
   result['changed'] = False
   result['success'] = False
   result['failed'] = True
   result['msg'] = "Failed to run module"
   result['rc'] = 1
-#  result['stdout'] = ""
-#  result['stdout_lines'] = ""
+  result['stdout'] = ""
+  result['stdout_lines'] = ""
   result['stderr'] = "Failed to run module"
-#  result['stderr_lines'] = "Failed to run module"
+  result['stderr_lines'] = "Failed to run module"
 
 module.exit_json(**result)
