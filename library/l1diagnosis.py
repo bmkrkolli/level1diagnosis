@@ -57,8 +57,8 @@ try:
   KERNEL = platform.release()
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
-  CPU = os.system("which top >/dev/null 2>&1 && (top -b -n 2 | grep 'Cpu(s)' | tail -n 1 | awk '{print $2}'| awk -F. '{print $1}')||echo 'top command not found'")
-  MEM = os.system("free | grep Mem | awk '{print $3/$2 * 100.0}'||echo 'free command not found'")
+  CPU = psutil.cpu_percent()
+  MEM = psutil.virtual_memory()
   CPUS = os.system("nproc||echo 'nproc command not found'")
   TMEM = os.system("free -m | grep Mem | awk '{print $2}'||echo 'free command not found'")
   SWAP = os.system("free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found'")
@@ -67,7 +67,7 @@ try:
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
-  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT}
+  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM}
 #  result['stdout'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
 #  result['stdout_lines'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
   result['stderr'] = ""
