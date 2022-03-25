@@ -69,8 +69,8 @@ try:
   result['failed'] = False
   result['msg'] = ""
   result['rc'] = 0
-  result['stdout'] = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP
-  result['stdout_lines'] = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP
+  result['stdout'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
+  result['stdout_lines'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
   result['stderr'] = ""
   result['stderr_lines'] = ""
 except:
