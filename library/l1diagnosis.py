@@ -52,7 +52,7 @@ module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
 
 try:
-  HN = os.system("uname -n")
+  HN = platform.node()
   OS = os.system("egrep -w \"NAME|VERSION\" /etc/os-release|awk -F= '{ print $2 }'|sed 's/\"//g'||echo '/etc/os-release command not found'")
   KERNEL = os.system("uname -ri||echo 'uname command not found'")
   LBT = os.system("uptime -s||echo 'uptime command not found'")
