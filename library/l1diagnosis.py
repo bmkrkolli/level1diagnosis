@@ -66,7 +66,7 @@ try:
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
   CPU = psutil.cpu_percent()
-  MEM = psutil.virtual_memory([2])
+  MEM = psutil.virtual_memory()
   CPUS = psutil.cpu_count()
   TMEM = psutil.virtual_memory()
   SWAP = psutil.swap_memory
