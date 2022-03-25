@@ -47,7 +47,7 @@ import datetime
 import json
 import re
 
-module = AnsibleModule()
+module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
 result['changed'] = False
 
