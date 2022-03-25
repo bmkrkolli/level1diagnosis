@@ -43,13 +43,20 @@ from ansible.module_utils.common.sys_info import get_platform_subclass
 import os
 import platform
 import sys
-import psutil
 import datetime
 import json
 import re
 
+try:
+  import psutil
+  HAS_PSUTIL = True
+except ImportError:
+  HAS_PSUTIL = False
+
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
+
+
 
 try:
   HN = platform.node()
@@ -58,16 +65,16 @@ try:
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
   CPU = psutil.cpu_percent()
-  MEM = psutil.virtual_memory()[2]
+  MEM = psutil.virtual_memory(2)
   CPUS = os.system("nproc||echo 'nproc command not found'")
   TMEM = os.system("free -m | grep Mem | awk '{print $2}'||echo 'free command not found'")
-  SWAP = os.system("free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found'")
+  SWAP = psutil.swap_memory(3)
 #  FS = os.system("df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=\",\"} NR>1{print \"{\"Mount\":\"\"$7\"\", \"UsedPercent\":\"\"$6\"\"}\"}'||echo 'df command not found,'") 
 #  STDOUTPUT = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP # + ", \"Filesystems\": [" + FS + "]"
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
-  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM}
+  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP}
 #  result['stdout'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
 #  result['stdout_lines'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
   result['stderr'] = ""
