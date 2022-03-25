@@ -69,7 +69,7 @@ try:
   MEM = psutil.virtual_memory()
   CPUS = psutil.cpu_count()
   TMEM = psutil.virtual_memory()
-  SWAP = psutil.swap_memory
+  SWAP = psutil.swap_memory()
 #  FS = os.system("df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=\",\"} NR>1{print \"{\"Mount\":\"\"$7\"\", \"UsedPercent\":\"\"$6\"\"}\"}'||echo 'df command not found,'") 
 #  STDOUTPUT = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP # + ", \"Filesystems\": [" + FS + "]"
   result['changed'] = False
