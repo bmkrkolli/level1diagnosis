@@ -46,19 +46,21 @@ import sys
 import datetime
 import json
 import re
-import psutil
 import csv
-#try:
-#  import psutil
-#  HAS_PSUTIL = True
-#except ImportError:
-#  HAS_PSUTIL = False
+
+try:
+  import psutil
+  HAS_PSUTIL = True
+except ImportError:
+  HAS_PSUTIL = False
 
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
-RELEASE_DATA = {}
-FN = {}
 
+RELEASE_DATA = {}
+FS = []
+HN = platform.node()
+KERNEL = platform.release()
 
 with open("/etc/os-release") as file:
   reader = csv.reader(file, delimiter="=")
@@ -66,13 +68,12 @@ with open("/etc/os-release") as file:
     if row:
       RELEASE_DATA[row[0]] = row[1]
 
-for mountpoint in psutil.disk_partitions():
-  FN.update({"Mount": mountpoint, "UsedPercent": psutil.disk_usage(mountpoint).percent})
+OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
+  
+if HAS_PSUTIL:
+  for item in psutil.disk_partitions():
+    FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
 
-try:
-  HN = platform.node()
-  OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
-  KERNEL = platform.release()
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
   CPU = psutil.cpu_percent()
@@ -86,15 +87,15 @@ try:
   result['failed'] = False
   result['msg'] = "Success"
   result['rc'] = 0
-  result['stdout'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FN}
-  result['stdout_lines'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FN}
-except:
+  result['stdout'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
+  result['stdout_lines'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
+else:
   result['changed'] = False
   result['success'] = False
   result['failed'] = True
-  result['msg'] = "Failed to run module"
+  result['msg'] = "Failed to run module, because of psutil unavailable"
   result['rc'] = 1
-  result['stderr'] = "Failed to run module"
-  result['stderr_lines'] = "Failed to run module"
+  result['stderr'] = "Failed to run module, because of psutil unavailable"
+  result['stderr_lines'] = "Failed to run module, because of psutil unavailable"
 
 module.exit_json(**result)
