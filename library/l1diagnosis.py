@@ -55,7 +55,7 @@ try:
   HN = platform.node()
   OS = platform.system()
   KERNEL = platform.release()
-  LBT = os.system("uptime -s")
+  LBT = os.system('uptime -s')
   CPU = os.system("which top >/dev/null 2>&1 && (top -b -n 2 | grep 'Cpu(s)' | tail -n 1 | awk '{print $2}'| awk -F. '{print $1}')||echo 'top command not found'")
   MEM = os.system("free | grep Mem | awk '{print $3/$2 * 100.0}'||echo 'free command not found'")
   CPUS = os.system("nproc||echo 'nproc command not found'")
