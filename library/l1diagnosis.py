@@ -57,12 +57,17 @@ import csv
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
 RELEASE_DATA = {}
+FN = {}
 
-with open("/etc/os-release") as f:
-    reader = csv.reader(f, delimiter="=")
-    for row in reader:
-        if row:
-            RELEASE_DATA[row[0]] = row[1]
+
+with open("/etc/os-release") as file:
+  reader = csv.reader(file, delimiter="=")
+  for row in reader:
+    if row:
+      RELEASE_DATA[row[0]] = row[1]
+
+for mountpoint in psutil.disk_partitions():
+  FN.update({"Mount": mountpoint, "UsedPercent": psutil.disk_usage(mountpoint).percent})
 
 try:
   HN = platform.node()
@@ -75,24 +80,20 @@ try:
   CPUS = psutil.cpu_count()
   TMEM = (psutil.virtual_memory().total/1024)/1024
   SWAP = psutil.swap_memory().percent
-#  FS = os.system("df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=\",\"} NR>1{print \"{\"Mount\":\"\"$7\"\", \"UsedPercent\":\"\"$6\"\"}\"}'||echo 'df command not found,'") 
-#  STDOUTPUT = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP # + ", \"Filesystems\": [" + FS + "]"
+  
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
-  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM}
-#  result['stdout'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
-#  result['stdout_lines'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
-  result['stderr'] = ""
-  result['stderr_lines'] = ""
+  result['msg'] = "Success"
+  result['rc'] = 0
+  result['stdout'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FN}
+  result['stdout_lines'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FN}
 except:
   result['changed'] = False
   result['success'] = False
   result['failed'] = True
   result['msg'] = "Failed to run module"
   result['rc'] = 1
-  result['stdout'] = ""
-  result['stdout_lines'] = ""
   result['stderr'] = "Failed to run module"
   result['stderr_lines'] = "Failed to run module"
 
