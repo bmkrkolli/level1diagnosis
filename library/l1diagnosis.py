@@ -47,7 +47,7 @@ import datetime
 import json
 import re
 import psutil
-
+import csv
 #try:
 #  import psutil
 #  HAS_PSUTIL = True
@@ -56,19 +56,24 @@ import psutil
 
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
+RELEASE_DATA = {}
 
-
+with open("/etc/os-release") as f:
+    reader = csv.reader(f, delimiter="=")
+    for row in reader:
+        if row:
+            RELEASE_DATA[row[0]] = row[1]
 
 try:
   HN = platform.node()
-  OS = platform.system()
+  OS = RELEASE_DATA["NAME"]
   KERNEL = platform.release()
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
   CPU = psutil.cpu_percent()
   MEM = psutil.virtual_memory().percent
   CPUS = psutil.cpu_count()
-  TMEM = psutil.virtual_memory().total
+  TMEM = (psutil.virtual_memory().total/1024)/1024
   SWAP = psutil.swap_memory().percent
 #  FS = os.system("df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=\",\"} NR>1{print \"{\"Mount\":\"\"$7\"\", \"UsedPercent\":\"\"$6\"\"}\"}'||echo 'df command not found,'") 
 #  STDOUTPUT = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP # + ", \"Filesystems\": [" + FS + "]"
