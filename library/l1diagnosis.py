@@ -66,7 +66,7 @@ with open("/etc/os-release") as f:
 
 try:
   HN = platform.node()
-  OS = RELEASE_DATA["NAME"]
+  OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
   KERNEL = platform.release()
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
