@@ -66,7 +66,7 @@ try:
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
-  result['msg'] = HN + " , " + OS + " , " + KERNEL + " , " + LBT + " , " + CPU + " , " + MEM + " , " + CPUS + " , " + TMEM + " , " + SWAP
+  result['msg'] = HN #+ " , " + OS + " , " + KERNEL + " , " + LBT + " , " + CPU + " , " + MEM + " , " + CPUS + " , " + TMEM + " , " + SWAP
   result['rc'] = 0
 #  result['stdout'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
 #  result['stdout_lines'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
