@@ -53,7 +53,7 @@ result = {}
 
 try:
   HN = platform.node()
-  OS = platform.system()# + " " + platform.version()
+  OS = platform.freedesktop_os_release()# + " " + platform.version()
   KERNEL = platform.release()# + " " + platform.architecture()
   LBT = os.system("uptime -s")
   CPU = os.system("which top >/dev/null 2>&1 && (top -b -n 2 | grep 'Cpu(s)' | tail -n 1 | awk '{print $2}'| awk -F. '{print $1}')||echo 'top command not found'")
