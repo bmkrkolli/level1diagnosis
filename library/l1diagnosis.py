@@ -58,7 +58,7 @@ try:
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
   CPU = psutil.cpu_percent()
-  MEM = psutil.virtual_memory()
+  MEM = psutil.virtual_memory()[2]
   CPUS = os.system("nproc||echo 'nproc command not found'")
   TMEM = os.system("free -m | grep Mem | awk '{print $2}'||echo 'free command not found'")
   SWAP = os.system("free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found'")
