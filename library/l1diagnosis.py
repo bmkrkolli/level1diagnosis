@@ -53,7 +53,7 @@ result = {}
 
 try:
   HN = os.system("uname -n||echo 'uname command not found'")
-  OS = os.system("egrep -w \"NAME|VERSION\" /etc/os-release|awk -F= '{ print $2 }'|sed 's/\"//g'||echo '/etc/os-release command not found'")
+#  OS = os.system("egrep -w \"NAME|VERSION\" /etc/os-release|awk -F= '{ print $2 }'|sed 's/\"//g'||echo '/etc/os-release command not found'")
   KERNEL = os.system("uname -ri||echo 'uname command not found'")
   LBT = os.system("uptime -s||echo 'uptime command not found'")
   CPU = os.system("which top >/dev/null 2>&1 && (top -b -n 2 | grep 'Cpu(s)' | tail -n 1 | awk '{print $2}'| awk -F. '{print $1}')||echo 'top command not found'")
@@ -62,7 +62,7 @@ try:
   TMEM = os.system("free -m | grep Mem | awk '{print $2}'||echo 'free command not found'")
   SWAP = os.system("free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found'")
 #  FS = os.system("df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=\",\"} NR>1{print \"{\"Mount\":\"\"$7\"\", \"UsedPercent\":\"\"$6\"\"}\"}'||echo 'df command not found,'") 
-#  FS = ""
+  OS = ""
 #  STDOUTPUT = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP # + ", \"Filesystems\": [" + FS + "]"
   result['changed'] = False
   result['success'] = True
