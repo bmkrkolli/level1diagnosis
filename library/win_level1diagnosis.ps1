@@ -13,14 +13,14 @@ try {
     $pageinfo = get-wmiobject Win32_PageFileUsage;
     $pct = [Math]::Round(($pageinfo.CurrentUsage/$pageinfo.AllocatedBaseSize)*100,2);
     $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};
-    $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; OSArchitecture = $os.OSArchitecture;
+    $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; Version = $os.Version + " " + $os.OSArchitecture;
         LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores.NumberOfProcessors; CPULoadPercent = $cpu; 
-        MemoryMB = $tm; MemoryLoadPercent = $um; LogicalProcessors = $cores.NumberOfLogicalProcessors; 
-        PageFileLoadPercent = $pct; DiskLoad = $dsk }; 
+        MemoryMB = $tm; MemoryLoadPercent = $um; SWAPLoadPercent = $pct; FileSystems = $dsk }; 
     
     $result = @{
         failed = $false
         changed = $false
+        success = $true
         msg = ""
         rc = 0
         stderr = ""
@@ -33,6 +33,7 @@ catch {
     $result = @{
         failed = $true
         changed = $false
+        success = $false
         msg = "Failed to Get Level 1 Diagnosis Information"
         rc = 1
         stderr = $PSItem

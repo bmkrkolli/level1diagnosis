@@ -43,23 +43,44 @@ from ansible.module_utils.common.sys_info import get_platform_subclass
 import os
 import platform
 import sys
+import psutil
 import datetime
 import json
 import re
 
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
-result['changed'] = False
 
 try:
-    import psutil
-    result['success'] = True
-    result['msg'] = platform.machine() + "," + platform.system() + "," + platform.version()
-    result['rc'] = 0
-except ImportError:
-    PSUTIL_IMP_ERR = traceback.format_exc()
-    result['success'] = False
-    result['msg'] = PSUTIL_IMP_ERR
-    result['rc'] = 1
+  HN = os.system("uname -n||echo 'uname command not found'")
+  OS = os.system("egrep -w \"NAME|VERSION\" /etc/os-release|awk -F= '{ print $2 }'|sed 's/\"//g'||echo '/etc/os-release command not found'")
+  KERNEL = os.system("uname -ri||echo 'uname command not found'")
+  LBT = os.system("uptime -s||echo 'uptime command not found'")
+  CPU = os.system("which top >/dev/null 2>&1 && (top -b -n 2 | grep 'Cpu(s)' | tail -n 1 | awk '{print $2}'| awk -F. '{print $1}')||echo 'top command not found'")
+  MEM = os.system("free | grep Mem | awk '{print $3/$2 * 100.0}'||echo 'free command not found'")
+  CPUS = os.system("nproc||echo 'nproc command not found'")
+  TMEM = os.system("free -m | grep Mem | awk '{print $2}'||echo 'free command not found'")
+  SWAP = os.system("free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found'")
+  FS = os.system("df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=\",\"} NR>1{print \"{\"Mount\":\"\"$7\"\", \"UsedPercent\":\"\"$6\"\"}\"}'||echo 'df command not found,'") 
+  STDOUTPUT = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP + ", \"Filesystems\": [" + FS + "]"
+  result['changed'] = False
+  result['success'] = True
+  result['failed'] = False
+  result['msg'] = ""
+  result['rc'] = 0
+  result['stdout'] = STDOUTPUT
+  result['stdout_lines'] = STDOUTPUT
+  result['stderr'] = ""
+  result['stderr_lines'] = ""
+except:
+  result['changed'] = False
+  result['success'] = False
+  result['failed'] = True
+  result['msg'] = "Failed to run module"
+  result['rc'] = 1
+  result['stdout'] = ""
+  result['stdout_lines'] = ""
+  result['stderr'] = "Failed to run module"
+  result['stderr_lines'] = "Failed to run module"
 
 module.exit_json(**result)

@@ -88,14 +88,14 @@ TMEM=$(free -m | grep Mem | awk '{print $2}'||echo 'free command not found')
 SWAP=$(free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found')
 FS=$(df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":\""$6"\"}"}'||echo 'df command not found,')
 
-STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": \""$CPUS"\", \"MemoryMB\": \""$TMEM"\", \"Kernel\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"]"
+STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": \""$CPUS"\", \"MemoryMB\": \""$TMEM"\", \"Version\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"]"
 
 ER="not found"
 if [[ $STDOUTPUT =~ $ER ]];
 then
-    echo "{ \"changed\": false, \"failed\": true, \"rc\": 1, \"msg\": \"\", \"stderr\": {"$STDOUTPUT"}, \"stderr_lines\": {"$STDOUTPUT"}, \"stdout\": \"\", \"stdout_lines\": \"\" }"
+    echo "{ \"changed\": false, \"failed\": true, \"success\": false, \"rc\": 1, \"msg\": \"\", \"stderr\": {"$STDOUTPUT"}, \"stderr_lines\": {"$STDOUTPUT"}, \"stdout\": \"\", \"stdout_lines\": \"\" }"
     exit 1
 else
-    echo "{ \"changed\": false, \"failed\": false, \"rc\": 0, \"msg\": \"\", \"stderr\": \"\", \"stderr_lines\": \"\", \"stdout\": {"$STDOUTPUT"}, \"stdout_lines\": {"$STDOUTPUT"} }"
+    echo "{ \"changed\": false, \"failed\": false, \"success\": true, \"rc\": 0, \"msg\": \"\", \"stderr\": \"\", \"stderr_lines\": \"\", \"stdout\": {"$STDOUTPUT"}, \"stdout_lines\": {"$STDOUTPUT"} }"
     exit 0
 fi
