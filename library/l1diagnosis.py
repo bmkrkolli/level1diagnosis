@@ -54,7 +54,7 @@ result = {}
 try:
   HN = platform.node()
   OS = platform.system()
-  KERNEL = platform.architecture()# + " " + platform.architecture()
+  KERNEL = platform.release()
   LBT = os.system("uptime -s")
   CPU = os.system("which top >/dev/null 2>&1 && (top -b -n 2 | grep 'Cpu(s)' | tail -n 1 | awk '{print $2}'| awk -F. '{print $1}')||echo 'top command not found'")
   MEM = os.system("free | grep Mem | awk '{print $3/$2 * 100.0}'||echo 'free command not found'")
@@ -66,7 +66,7 @@ try:
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
-  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL}
+  result['msg'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT}
 #  result['stdout'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
 #  result['stdout_lines'] = "Hostname: " + HN + ", OS: " + OS + ", Cores: " + CPUS + ", MemoryMB: " + TMEM + ", Version: " + KERNEL + ", LastBootUpTime:" + LBT + ", CPULoadPercent: " + CPU + ", MemoryLoadPercent: " + MEM + ", SWAPLoadPercent: " + SWAP
   result['stderr'] = ""
