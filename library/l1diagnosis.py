@@ -36,16 +36,29 @@ EXAMPLES = r'''
 
 RETURN = r'''#'''
 
-import os
-import re
-
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.common.sys_info import get_platform_subclass
 
 import os
 import platform
+import sys
+import datetime
+import json
+import re
 
-print(os.getlogin())
-print(platform.machine())
-print(platform.system())
-print(platform.version())
+result = {}
+result['changed'] = False
+
+try:
+    import psutil
+    result['success'] = True
+    result['msg'] = platform.machine() + "," + platform.system() + "," + platform.version()
+    result['rc'] = 0
+except ImportError:
+    PSUTIL_IMP_ERR = traceback.format_exc()
+    result['success'] = False
+    result['msg'] = PSUTIL_IMP_ERR
+    result['rc'] = 1
+
+module.exit_json(**result)

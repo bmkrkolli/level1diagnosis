@@ -4,11 +4,6 @@
   vars:
     os_type: "{{ ansible_facts['os_family'] }}"
   tasks:
-    - name: "Python Level 1 Diagnosis"
-      l1diagnosis:
-      register: l1_info
-      ignore_errors: true
-
     - name: "win_level1diagnosis Level 1 Diagnosis"
       win_level1diagnosis: 
       register: win_l1_info
@@ -18,6 +13,12 @@
     - name: "level1diagnosis Level 1 Diagnosis"
       level1diagnosis:
       register: linux_l1_info
+      when: os_type != "Windows"
+      ignore_errors: true
+
+    - name: "Python Level 1 Diagnosis"
+      l1diagnosis:
+      register: l1_info
       when: os_type != "Windows"
       ignore_errors: true
 
