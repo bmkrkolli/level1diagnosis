@@ -46,12 +46,13 @@ import sys
 import datetime
 import json
 import re
+import psutil
 
-try:
-  import psutil
-  HAS_PSUTIL = True
-except ImportError:
-  HAS_PSUTIL = False
+#try:
+#  import psutil
+#  HAS_PSUTIL = True
+#except ImportError:
+#  HAS_PSUTIL = False
 
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 result = {}
@@ -65,10 +66,10 @@ try:
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
   CPU = psutil.cpu_percent()
-  MEM = psutil.virtual_memory(2)
-  CPUS = os.system("nproc||echo 'nproc command not found'")
-  TMEM = os.system("free -m | grep Mem | awk '{print $2}'||echo 'free command not found'")
-  SWAP = psutil.swap_memory(3)
+  MEM = psutil.virtual_memory([2])
+  CPUS = psutil.cpu_count()
+  TMEM = psutil.virtual_memory()
+  SWAP = psutil.swap_memory
 #  FS = os.system("df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=\",\"} NR>1{print \"{\"Mount\":\"\"$7\"\", \"UsedPercent\":\"\"$6\"\"}\"}'||echo 'df command not found,'") 
 #  STDOUTPUT = "\"Hostname\": \"" + HN + "\", \"OS\": \"" + OS + "\", \"Cores\": \"" + CPUS + "\", \"MemoryMB\": \"" + TMEM + "\", \"Version\": \"" + KERNEL + "\", \"LastBootUpTime\":\"" + LBT + "\", \"CPULoadPercent\": " + CPU + ", \"MemoryLoadPercent\": " + MEM + ", \"SWAPLoadPercent\": " + SWAP # + ", \"Filesystems\": [" + FS + "]"
   result['changed'] = False
