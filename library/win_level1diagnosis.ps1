@@ -26,7 +26,7 @@ try {
         if(get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'"){
             $dsk = get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};;
         } else {
-            $dsk = "$checklogicaldisk : Drive not found"
+            $dsk = "$checklogicaldisk Drive not found"
         };
     };
     if($topprocessesbycpu -ne 0){ 

@@ -19,16 +19,16 @@
       when: os_type == "Windows"
       ignore_errors: true
 
-    - name: "level1diagnosis Level 1 Diagnosis"
-      level1diagnosis:
-      register: linux_l1_info
-      when: os_type != "Windows"
-      ignore_errors: true
-
     - name: "Python Level 1 Diagnosis"
       l1diagnosis:
       register: l1_info
       when: os_type != "Windows"
+      ignore_errors: true
+
+    - name: "level1diagnosis Level 1 Diagnosis"
+      level1diagnosis:
+      register: linux_l1_info
+      when: l1_info is defined and l1_info.failed
       ignore_errors: true
 
     - name: "Set job_msg"
@@ -41,8 +41,15 @@
     - name: "Set job_msg"
       set_fact:
         job_msg: >-
-          "{{ inventory_hostname }}": {{ linux_l1_info.stdout | to_json }}
+          "{{ inventory_hostname }}": {{ l1_info.stdout | to_json }}
       when: os_type != "Windows"
+      ignore_errors: true
+
+    - name: "Set job_msg"
+      set_fact:
+        job_msg: >-
+          "{{ inventory_hostname }}": {{ linux_l1_info.stdout | to_json }}
+      when: l1_info is defined and l1_info.failed
       ignore_errors: true
 
     - name: Set facts for event acknowledgement
