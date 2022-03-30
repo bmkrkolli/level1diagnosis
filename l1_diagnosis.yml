@@ -30,7 +30,7 @@
       register: linux_l1_info
       when: 
         - l1_info is defined
-        - not l1_info.success
+        - l1_info.failed
       ignore_errors: true
 
     - name: "Set job_msg"
@@ -53,7 +53,7 @@
           "{{ inventory_hostname }}": {{ linux_l1_info.stdout | to_json }}
       when:
         - l1_info is defined
-        - not l1_info.success
+        - l1_info.failed
       ignore_errors: true
 
     - name: Set facts for event acknowledgement
