@@ -33,7 +33,7 @@ try {
             @{L='CPU';E={(($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/100/$env:NUMBER_OF_PROCESSORS).toString('P')}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending CPU | 
-            Select -First 5;
+            Select -First $topprocessesbycpu;
     } else {
         $tpcpu = "";
     };
@@ -46,7 +46,7 @@ try {
             @{L='Memory';E={$_.Group |? Path -like '*\Working Set' |% CookedValue}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending Memory | 
-            Select -First 5;
+            Select -First $topprocessesbymem;
     } else {
         $tpmem = "";
     };
