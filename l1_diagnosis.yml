@@ -10,6 +10,13 @@
       when: os_type == "Windows"
       ignore_errors: true
 
+    - name: "win_level1diagnosis with top Level 1 Diagnosis"
+      win_level1diagnosis: 
+        topprocessesbycpu: 5
+      register: top_l1_info
+      when: os_type == "Windows"
+      ignore_errors: true
+
     - name: "level1diagnosis Level 1 Diagnosis"
       level1diagnosis:
       register: linux_l1_info
