@@ -22,12 +22,13 @@ try {
     if($checklogicaldisk == "all"){
         $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};
     } else {
-        if(get-wmiobject Win32_LogicalDisk -Filter "DeviceId = '"$checklogicaldisk":'"){
-            $dsk = get-wmiobject Win32_LogicalDisk -Filter "DeviceId = '"$checklogicaldisk":'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};;
+        $checklogicaldisk = $checklogicaldisk + ":"
+        if(get-wmiobject Win32_LogicalDisk -Filter "DeviceId = '$checklogicaldisk'"){
+            $dsk = get-wmiobject Win32_LogicalDisk -Filter "DeviceId = '$checklogicaldisk'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};;
         } else {
             $dsk = "$checklogicaldisk : Drive not found"
-        }
-    }
+        };
+    };
     if($topprocessesbycpu -ne 0){ 
         $tpcpu = Get-Counter '\Process(*)\ID Process','\Process(*)\% Processor Time' -ErrorAction SilentlyContinue | 
             Select -ExpandProperty CounterSamples | 
