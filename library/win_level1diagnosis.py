@@ -23,9 +23,9 @@ options:
     default: 0
   checklogicaldisk
     description:
-      - check logical drives and used percent
-    type: boolean
-    default: true
+      - check logical drive and used percent(example: c)
+    type: string
+    default: all 
 attributes:
     check_mode:
         support: full

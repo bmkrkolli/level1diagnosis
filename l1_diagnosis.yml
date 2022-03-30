@@ -14,6 +14,7 @@
       win_level1diagnosis: 
         topprocessesbycpu: 3
         topprocessesbymem: 3
+        checklogicaldisk: e
       register: top_l1_info
       when: os_type == "Windows"
       ignore_errors: true
