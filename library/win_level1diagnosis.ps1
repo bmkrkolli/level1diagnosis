@@ -5,8 +5,8 @@ $params = Parse-Args $args -supports_check_mode $true
 $check_mode = Get-AnsibleParam -obj $params -name '_ansible_check_mode' -type 'bool' -default $false
 
 $topprocessesbycpu = Get-AnsibleParam -obj $params -name "topprocessesbycpu" -type "int" -default 0
-#$drive = Get-AnsibleParam -obj $params -name "drive" -type "str"
-#$initialSize = Get-AnsibleParam -obj $params -name "initial_size" -type "int"
+$topprocessesbymem = Get-AnsibleParam -obj $params -name "topprocessesbymem" -type "int" -default 0
+$checklogicaldisk = Get-AnsibleParam -obj $params -name "checklogicaldisk" -type "bool" -default $true
 
 try {
     $os = get-wmiobject Win32_OperatingSystem;
@@ -19,17 +19,41 @@ try {
     $um = [Math]::Round(100-(($am/$tm)*100));
     $pageinfo = get-wmiobject Win32_PageFileUsage;
     $pct = [Math]::Round(($pageinfo.CurrentUsage/$pageinfo.AllocatedBaseSize)*100,2);
-    $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};
-    if($topprocessesbycpu -ne 0){ 
-        $tpcpu = Get-Counter '\Process(*)\% Processor Time' | Select -ExpandProperty countersamples | Select -Property instancename, cookedvalue | ?{$_.instanceName -notmatch "^(idle|_total|system)$"} | Sort -Descending cookedvalue | Select -First $topprocessesbycpu InstanceName,@{L='CPU';E={($_.Cookedvalue/100/$env:NUMBER_OF_PROCESSORS).toString('P')}};
-        $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; Version = $os.Version + " " + $os.OSArchitecture;
-            LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores.NumberOfProcessors; CPULoadPercent = $cpu; 
-            MemoryMB = $tm; MemoryLoadPercent = $um; SWAPLoadPercent = $pct; FileSystems = $dsk; TopProcesessbyCPU = $tpcpu }; 
+    if($checklogicaldisk){
+        $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};
     } else {
-        $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; Version = $os.Version + " " + $os.OSArchitecture;
-            LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores.NumberOfProcessors; CPULoadPercent = $cpu; 
-            MemoryMB = $tm; MemoryLoadPercent = $um; SWAPLoadPercent = $pct; FileSystems = $dsk };
+        $dsk = "";
+    }
+    if($topprocessesbycpu -ne 0){ 
+        $tpcpu = Get-Counter '\Process(*)\ID Process','\Process(*)\% Processor Time' -ErrorAction SilentlyContinue | 
+            Select -ExpandProperty CounterSamples | 
+            Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
+            Group-Object {Split-Path $_.Path} | 
+            Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
+            @{L='CPU';E={(($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/100/$env:NUMBER_OF_PROCESSORS).toString('P')}},
+            @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
+            Sort-Object -Descending CPU | 
+            Select -First 5;
+    } else {
+        $tpcpu = "";
     };
+    if($topprocessesbymem -ne 0){ 
+        $tpmem = Get-Counter '\Process(*)\ID Process','\Process(*)\Working Set' -ErrorAction SilentlyContinue | 
+            Select -ExpandProperty CounterSamples | 
+            Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
+            Group-Object {Split-Path $_.Path} | 
+            Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
+            @{L='Memory';E={$_.Group |? Path -like '*\Working Set' |% CookedValue}},
+            @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
+            Sort-Object -Descending Memory | 
+            Select -First 5;
+    } else {
+        $tpmem = "";
+    };
+
+    $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; Version = $os.Version + " " + $os.OSArchitecture;
+    LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores.NumberOfProcessors; CPULoadPercent = $cpu; 
+    MemoryMB = $tm; MemoryLoadPercent = $um; SWAPLoadPercent = $pct; FileSystems = $dsk; TopProcesessbyCPU = $tpcpu; TopProcesessbyMEM = $tpmem }; 
 
     $result = @{
         failed = $false

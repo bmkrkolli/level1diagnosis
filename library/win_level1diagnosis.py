@@ -10,8 +10,22 @@ short_description: Get basic level 1 information of OS, CPU Load, Memory Load, D
 options: null
 description: 
   - This module gets basic level 1 information of OS, CPU Load, Memory Load, Disk Load, Pagefile Load, etc
-options: null
-
+options: 
+  topprocessesbycpu
+    description:
+      - No. of processes consuming high cpu
+    type: int
+    default: 0
+  topprocessesbymem
+    description:
+      - No. of processes consuming high memory
+    type: int
+    default: 0
+  checklogicaldisk
+    description:
+      - check logical drives and used percent
+    type: boolean
+    default: true
 attributes:
     check_mode:
         support: full
