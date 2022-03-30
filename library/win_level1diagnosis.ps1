@@ -20,7 +20,7 @@ try {
     $pageinfo = get-wmiobject Win32_PageFileUsage;
     $pct = [Math]::Round(($pageinfo.CurrentUsage/$pageinfo.AllocatedBaseSize)*100,2);
     $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};
-    if($topprocessesbycpu >= 1){ 
+    if($topprocessesbycpu -ne 0){ 
         $tpcpu = Get-Counter '\Process(*)\% Processor Time' | Select -ExpandProperty countersamples | Select -Property instancename, cookedvalue | ?{$_.instanceName -notmatch "^(idle|_total|system)$"} | Sort -Descending cookedvalue | Select -First $topprocessesbycpu InstanceName,@{L='CPU';E={($_.Cookedvalue/100/$env:NUMBER_OF_PROCESSORS).toString('P')}};
         $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; Version = $os.Version + " " + $os.OSArchitecture;
             LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores.NumberOfProcessors; CPULoadPercent = $cpu; 
