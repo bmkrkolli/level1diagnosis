@@ -29,7 +29,7 @@
       level1diagnosis:
         topprocessesbycpu: 3
         topprocessesbymem: 3
-        checklogicaldisk: e
+        checklogicaldisk: /boot
       register: linux_l1_info
       when: 
         - l1_info is failed
