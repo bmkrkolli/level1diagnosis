@@ -87,8 +87,10 @@ CPUS=$(nproc||echo 'nproc command not found')
 TMEM=$(free -m | grep Mem | awk '{print $2}'||echo 'free command not found')
 SWAP=$(free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found')
 FS=$(df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":\""$6"\"}"}'||echo 'df command not found,')
+TPCPU=$(ps -eo pid,cmd,%cpu --sort=-%cpu | head -4 | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$1"\", \"CMD\":\""$2"\", \"CPUPercent\":\""$3"\"}"}')
+TOMEM=$(ps -eo pid,cmd,%mem --sort=-%mem | head -4 | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$1"\", \"CMD\":\""$2"\", \"MemoryPercent\":\""$3"\"}"}')
 
-STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": \""$CPUS"\", \"MemoryMB\": \""$TMEM"\", \"Version\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"]"
+STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": \""$CPUS"\", \"MemoryMB\": \""$TMEM"\", \"Version\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"], \"TopProcesessbyCPU\": ["${TPCPU::-1}"], \"TopProcesessbyMEM\": ["${TPMEM::-1}"]"
 
 ER="not found"
 if [[ $STDOUTPUT =~ $ER ]];
