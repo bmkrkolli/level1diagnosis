@@ -139,6 +139,3 @@ def run_module():
 
 def main():
     run_module()
-
-if __name__ == '__main__':
-    main()
