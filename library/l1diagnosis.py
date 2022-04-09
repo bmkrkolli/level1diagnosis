@@ -51,8 +51,7 @@ EXAMPLES = r'''
 RETURN = r'''#'''
 
 # import module snippets
-from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.sys_info import get_platform_subclass
+from ansible.module_utils.basic import *
 
 import os
 import platform
@@ -84,6 +83,9 @@ RELEASE_DATA = {}
 FS = []
 HN = platform.node()
 KERNEL = platform.release()
+
+for name, value in globals().items():
+  print(name, value)
 
 with open("/etc/os-release") as file:
   reader = csv.reader(file, delimiter="=")
