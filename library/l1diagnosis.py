@@ -85,8 +85,7 @@ module = AnsibleModule(
 
 result = dict(
     changed=False,
-    original_message='',
-    message=''
+    msg=''
 )
 
 logger_name = module._syslog_facility
@@ -119,7 +118,7 @@ if HAS_PSUTIL:
   CPUS = psutil.cpu_count()
   TMEM = (psutil.virtual_memory().total/1024)/1024
   SWAP = psutil.swap_memory().percent
-  syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
+  #syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
