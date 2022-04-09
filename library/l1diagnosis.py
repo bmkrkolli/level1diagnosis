@@ -71,14 +71,14 @@ def run_module():
     except ImportError:
       HAS_PSUTIL = False
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
-
     module_args = dict(
         endpoint=dict(type='str', required=True),
         sample=dict(type='bool', required=False, default=False)
+    )
+
+    module = AnsibleModule(
+        argument_spec=module_args,
+        supports_check_mode=True
     )
 
     result = dict(
