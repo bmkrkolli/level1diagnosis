@@ -1,7 +1,7 @@
 #!python3 
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, division, print_function
+from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
@@ -52,6 +52,7 @@ RETURN = r'''#'''
 
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.common.sys_info import get_platform_subclass
 from ansible.errors import AnsibleLookupError, AnsibleParserError
 from ansible.plugins.lookup import LookupBase
 from ansible.utils.display import Display
@@ -73,14 +74,14 @@ try:
 except ImportError:
   HAS_PSUTIL = False
 
-module_args = dict(
-    endpoint=dict(type='str', required=True),
-    sample=dict(type='bool', required=False, default=False)
-)
-
 module = AnsibleModule(
     argument_spec=module_args,
     supports_check_mode=True
+)
+
+module_args = dict(
+    endpoint=dict(type='str', required=True),
+    sample=dict(type='bool', required=False, default=False)
 )
 
 result = dict(
