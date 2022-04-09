@@ -111,7 +111,7 @@ def run_module():
       for item in psutil.disk_partitions():
         FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
       logger.info("Getting info using PSUTIL Functions")
-      logger.info("Started on " + inventory_hostname )
+      #logger.info("Started on " + inventory_hostname )
       last_reboot = psutil.boot_time()
       LBT = datetime.datetime.fromtimestamp(last_reboot)
       CPU = psutil.cpu_percent()
