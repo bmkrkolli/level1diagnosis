@@ -84,9 +84,6 @@ FS = []
 HN = platform.node()
 KERNEL = platform.release()
 
-for name, value in globals().items():
-  print(name, value)
-
 with open("/etc/os-release") as file:
   reader = csv.reader(file, delimiter="=")
   for row in reader:
