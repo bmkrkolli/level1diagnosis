@@ -63,8 +63,7 @@ import re
 import csv
 
 import logging
-logging.basicConfig(filename="/tmp/temp.log",
-                    format='%(asctime)s %(message)s',
+logging.basicConfig(format='%(asctime)s %(message)s',
                     filemode='w')
 logger=logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -97,7 +96,7 @@ OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"]
 if HAS_PSUTIL:
   for item in psutil.disk_partitions():
     FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
-
+  logger.info("Getting info using PSUTIL Functions" )
   last_reboot = psutil.boot_time()
   LBT = datetime.datetime.fromtimestamp(last_reboot)
   CPU = psutil.cpu_percent()
@@ -105,7 +104,7 @@ if HAS_PSUTIL:
   CPUS = psutil.cpu_count()
   TMEM = (psutil.virtual_memory().total/1024)/1024
   SWAP = psutil.swap_memory().percent
-  
+  logger.info("Printing Output" )
   result['changed'] = False
   result['success'] = True
   result['failed'] = False
