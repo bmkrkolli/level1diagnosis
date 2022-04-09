@@ -53,7 +53,6 @@ RETURN = r'''#'''
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.sys_info import get_platform_subclass
-from ansible.utils.display import Display
 from ansible.module_utils.urls import open_url
 
 import os
