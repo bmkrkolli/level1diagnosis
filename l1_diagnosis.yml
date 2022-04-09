@@ -4,21 +4,6 @@
   vars:
     os_type: "{{ ansible_facts['os_family'] }}"
   tasks:
-    - name: "win_level1diagnosis Level 1 Diagnosis"
-      win_level1diagnosis: 
-      register: win_l1_info
-      when: os_type == "Windows"
-      ignore_errors: true
-
-    - name: "win_level1diagnosis with top Level 1 Diagnosis"
-      win_level1diagnosis: 
-        topprocessesbycpu: 3
-        topprocessesbymem: 3
-        checklogicaldisk: e
-      register: top_l1_info
-      when: os_type == "Windows"
-      ignore_errors: true
-
     - name: "Python Level 1 Diagnosis"
       l1diagnosis:
         endpoint: "{{ inventory_hostname }}"
@@ -32,6 +17,21 @@
       when: 
         - l1_info is failed
         - os_type != "Windows"
+      ignore_errors: true
+
+    - name: "win_level1diagnosis Level 1 Diagnosis"
+      win_level1diagnosis: 
+      register: win_l1_info
+      when: os_type == "Windows"
+      ignore_errors: true
+
+    - name: "win_level1diagnosis with top Level 1 Diagnosis"
+      win_level1diagnosis: 
+        topprocessesbycpu: 3
+        topprocessesbymem: 3
+        checklogicaldisk: e
+      register: top_l1_info
+      when: os_type == "Windows"
       ignore_errors: true
 
     - name: "Set job_msg"
