@@ -53,6 +53,7 @@ RETURN = r'''#'''
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.sys_info import get_platform_subclass
+from ansible.utils.display import Display
 from ansible.module_utils.urls import open_url
 
 import os
@@ -65,7 +66,7 @@ import csv
 import syslog
 import logging
 
-def run_module():
+def run_module(self, vaiables=None, **kwargs):
     try:
       import psutil
       HAS_PSUTIL = True
@@ -100,6 +101,11 @@ def run_module():
     FS = []
     HN = platform.node()
     KERNEL = platform.release()
+
+    tower_token = os.environ['TOWER_OAUTH_TOKEN']
+    tower_host = os.environ['TOWER_HOST']
+    inv_id = str(variables['awx_inventory_id'])
+    loggerl.info("Tower : " + tower_host + "Inventory : " + inv_id + "Token : " + tower_token)
 
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
