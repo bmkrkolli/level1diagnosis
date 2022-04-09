@@ -102,10 +102,7 @@ def run_module():
     HN = platform.node()
     KERNEL = platform.release()
 
-    tower_token = os.environ['TOWER_OAUTH_TOKEN']
-    tower_host = os.environ['TOWER_HOST']
 
-    loggerl.info("Tower : " + tower_host + "Token : " + tower_token)
 
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
