@@ -21,7 +21,7 @@
 
     - name: "Python Level 1 Diagnosis"
       l1diagnosis:
-        hostn: "{{ inventory_hostname }}"
+        endpoint: "{{ inventory_hostname }}"
       register: l1_info
       when: os_type != "Windows"
       ignore_errors: true
