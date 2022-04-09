@@ -11,8 +11,22 @@ module: level1diagnosis
 short_description: Get basic level 1 information of OS, CPU Load, Memory Load, Filesystems Load, SWAP Load, etc
 description: 
   - This module gets basic level 1 information of OS, CPU Load, Memory Load, Filesystems Load, SWAP Load, etc
-options: null
-
+options:
+  topprocessesbycpu
+    description:
+      - No. of processes consuming high cpu
+    type: int
+    default: 0
+  topprocessesbymem
+    description:
+      - No. of processes consuming high memory
+    type: int
+    default: 0
+  checkfilesystems
+    description:
+      - check filesystems and used percent(example: /)
+    type: string
+    default: all 
 attributes:
     check_mode:
         support: full
@@ -48,6 +62,13 @@ import json
 import re
 import csv
 
+import logging
+logging.basicConfig(filename="\\tmp\\temp.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='w')
+logger=logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
 try:
   import psutil
   HAS_PSUTIL = True
@@ -55,6 +76,9 @@ except ImportError:
   HAS_PSUTIL = False
 
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
+
+logger.info("Started on " + module.params['hostn'] )
+
 result = {}
 
 RELEASE_DATA = {}
