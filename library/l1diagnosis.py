@@ -101,7 +101,11 @@ def run_module():
     HN = platform.node()
     KERNEL = platform.release()
 
-    loggerl.info("Tower : " + str(os.environ))
+    TPCPU='ps aux --sort -%cpu | head -4 | awk \'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}\''
+    TPMEM='ps aux --sort -%mem | head -4 | awk \'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}\''
+    
+    loggerl.info("TopProcess : " + os.system(TPCPU))
+    loggerl.info("TopProcess : " + os.system(TPMEM))
 
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
