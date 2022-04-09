@@ -101,7 +101,7 @@ def run_module():
     HN = platform.node()
     KERNEL = platform.release()
 
-    loggerl.info("Tower : " + os.environ)
+    loggerl.info("Tower : " + str(os.environ))
 
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
