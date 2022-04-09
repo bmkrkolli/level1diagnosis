@@ -65,11 +65,7 @@ def run_module():
     import json
     import re
     import csv
-
-    import logging
-    logging.basicConfig(format='%(asctime)s %(message)s',filemode='w')
-    logger=logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    import syslog
 
     try:
       import psutil
@@ -93,7 +89,11 @@ def run_module():
         message=''
     )
 
-    logger.info("Started on " + module.params['endpoint'] )
+    logger_name = module._syslog_facility
+    logger = getattr(syslog, logger_name, syslog.LOG_USER)
+    syslog.openlog(str(module), 0, logger)
+    syslog.syslog(syslog.LOG_INFO, "Started on " + module.params['endpoint'])
+
     RELEASE_DATA = {}
     FS = []
     HN = platform.node()
@@ -110,8 +110,8 @@ def run_module():
     if HAS_PSUTIL:
       for item in psutil.disk_partitions():
         FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
-      logger.info("Getting info using PSUTIL Functions")
-      #logger.info("Started on " + inventory_hostname )
+      syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL")
+      syslog.syslog(syslog.LOG_INFO, "I m here " + inventory_hostname)
       last_reboot = psutil.boot_time()
       LBT = datetime.datetime.fromtimestamp(last_reboot)
       CPU = psutil.cpu_percent()
