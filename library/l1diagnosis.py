@@ -92,8 +92,7 @@ def run_module():
     syslog.openlog(str(module), 0, logger)
     syslog.syslog(syslog.LOG_INFO, "Started on " + module.params['endpoint'])
 
-
-    logging.basicConfig(filemode='w', level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+    logging.basicConfig(filemode='w', level=logging.INFO, format='%(asctime)s  %(levelname)s  %(message)s') #filename='app.log',
     loggerl=logging.getLogger()
     loggerl.info("Started on " + module.params['endpoint'])
 
@@ -114,7 +113,8 @@ def run_module():
       for item in psutil.disk_partitions():
         FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
       syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL")
-      
+      loggerl.info("Getting Info using PSUTIL")
+
       last_reboot = psutil.boot_time()
       LBT = datetime.datetime.fromtimestamp(last_reboot)
       CPU = psutil.cpu_percent()
@@ -123,6 +123,7 @@ def run_module():
       TMEM = (psutil.virtual_memory().total/1024)/1024
       SWAP = psutil.swap_memory().percent
       #syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
+      
       result['changed'] = False
       result['success'] = True
       result['failed'] = False
