@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import (absolute_import, division, print_function)
+from typing_extensions import Self
 __metaclass__ = type
 
 
@@ -65,7 +66,7 @@ import csv
 import syslog
 import logging
 
-def run_module(self, vaiables=None, **kwargs):
+def run_module():
     try:
       import psutil
       HAS_PSUTIL = True
@@ -103,8 +104,8 @@ def run_module(self, vaiables=None, **kwargs):
 
     tower_token = os.environ['TOWER_OAUTH_TOKEN']
     tower_host = os.environ['TOWER_HOST']
-    inv_id = str(variables['awx_inventory_id'])
-    loggerl.info("Tower : " + tower_host + "Inventory : " + inv_id + "Token : " + tower_token)
+
+    loggerl.info("Tower : " + tower_host + "Token : " + tower_token)
 
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
