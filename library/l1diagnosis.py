@@ -76,7 +76,9 @@ except ImportError:
   HAS_PSUTIL = False
 
 module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
-
+module_args = dict(
+    hostn=dict(type="str", required=True),
+)
 logger.info("Started on " + module.params['hostn'] )
 
 result = {}
