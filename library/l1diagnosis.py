@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import (absolute_import, division, print_function)
-from typing_extensions import Self
 __metaclass__ = type
 
 
@@ -103,6 +102,10 @@ def run_module():
     KERNEL = platform.release()
 
 
+    tower_token = os.environ['TOWER_OAUTH_TOKEN']
+    tower_host = os.environ['TOWER_HOST']
+
+    loggerl.info("Tower : " + tower_host + "Token : " + tower_token)
 
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
