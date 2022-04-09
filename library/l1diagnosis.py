@@ -57,85 +57,82 @@ from ansible.plugins.lookup import LookupBase
 from ansible.utils.display import Display
 from ansible.module_utils.urls import open_url
 
-def run_module():
-    import os
-    import platform
-    import sys
-    import datetime
-    import json
-    import re
-    import csv
-    import syslog
 
-    try:
-      import psutil
-      HAS_PSUTIL = True
-    except ImportError:
-      HAS_PSUTIL = False
+import os
+import platform
+import sys
+import datetime
+import json
+import re
+import csv
+import syslog
 
-    module_args = dict(
-        endpoint=dict(type='str', required=True),
-        sample=dict(type='bool', required=False, default=False)
-    )
+try:
+  import psutil
+  HAS_PSUTIL = True
+except ImportError:
+  HAS_PSUTIL = False
 
-    module = AnsibleModule(
-        argument_spec=module_args,
-        supports_check_mode=True
-    )
+module_args = dict(
+    endpoint=dict(type='str', required=True),
+    sample=dict(type='bool', required=False, default=False)
+)
 
-    result = dict(
-        changed=False,
-        original_message='',
-        message=''
-    )
+module = AnsibleModule(
+    argument_spec=module_args,
+    supports_check_mode=True
+)
 
-    logger_name = module._syslog_facility
-    logger = getattr(syslog, logger_name, syslog.LOG_USER)
-    syslog.openlog(str(module), 0, logger)
-    syslog.syslog(syslog.LOG_INFO, "Started on " + module.params['endpoint'])
+result = dict(
+    changed=False,
+    original_message='',
+    message=''
+)
 
-    RELEASE_DATA = {}
-    FS = []
-    HN = platform.node()
-    KERNEL = platform.release()
+logger_name = module._syslog_facility
+logger = getattr(syslog, logger_name, syslog.LOG_USER)
+syslog.openlog(str(module), 0, logger)
+syslog.syslog(syslog.LOG_INFO, "Started on " + module.params['endpoint'])
 
-    with open("/etc/os-release") as file:
-      reader = csv.reader(file, delimiter="=")
-      for row in reader:
-        if row:
-          RELEASE_DATA[row[0]] = row[1]
+RELEASE_DATA = {}
+FS = []
+HN = platform.node()
+KERNEL = platform.release()
 
-    OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
-      
-    if HAS_PSUTIL:
-      for item in psutil.disk_partitions():
-        FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
-      syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL")
-      syslog.syslog(syslog.LOG_INFO, "I m here " + inventory_hostname)
-      last_reboot = psutil.boot_time()
-      LBT = datetime.datetime.fromtimestamp(last_reboot)
-      CPU = psutil.cpu_percent()
-      MEM = psutil.virtual_memory().percent
-      CPUS = psutil.cpu_count()
-      TMEM = (psutil.virtual_memory().total/1024)/1024
-      SWAP = psutil.swap_memory().percent
-      logger.info("Printing Output" )
-      result['changed'] = False
-      result['success'] = True
-      result['failed'] = False
-      result['msg'] = "Success"
-      result['rc'] = 0
-      result['stdout'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
-      result['stdout_lines'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
-    else:
-      result['changed'] = False
-      result['success'] = False
-      result['failed'] = True
-      result['msg'] = "Failed to run module, because of psutil unavailable"
-      result['rc'] = 1
-      result['stderr'] = "Failed to run module, because of psutil unavailable"
-      result['stderr_lines'] = "Failed to run module, because of psutil unavailable"
-    module.exit_json(**result)
+with open("/etc/os-release") as file:
+  reader = csv.reader(file, delimiter="=")
+  for row in reader:
+    if row:
+      RELEASE_DATA[row[0]] = row[1]
 
-def main():
-    run_module()
+OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
+  
+if HAS_PSUTIL:
+  for item in psutil.disk_partitions():
+    FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
+  syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL")
+  
+  last_reboot = psutil.boot_time()
+  LBT = datetime.datetime.fromtimestamp(last_reboot)
+  CPU = psutil.cpu_percent()
+  MEM = psutil.virtual_memory().percent
+  CPUS = psutil.cpu_count()
+  TMEM = (psutil.virtual_memory().total/1024)/1024
+  SWAP = psutil.swap_memory().percent
+  syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
+  result['changed'] = False
+  result['success'] = True
+  result['failed'] = False
+  result['msg'] = "Success"
+  result['rc'] = 0
+  result['stdout'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
+  result['stdout_lines'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
+else:
+  result['changed'] = False
+  result['success'] = False
+  result['failed'] = True
+  result['msg'] = "Failed to run module, because of psutil unavailable"
+  result['rc'] = 1
+  result['stderr'] = "Failed to run module, because of psutil unavailable"
+  result['stderr_lines'] = "Failed to run module, because of psutil unavailable"
+module.exit_json(**result)
