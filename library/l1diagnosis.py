@@ -55,7 +55,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.sys_info import get_platform_subclass
 from ansible.module_utils.urls import open_url
 
-import os
 import platform
 import sys
 import datetime
@@ -64,7 +63,8 @@ import re
 import csv
 import syslog
 import logging
-import subprocess
+import os
+
 
 def run_module():
     try:
@@ -105,8 +105,8 @@ def run_module():
     TPCPU='ps aux --sort -%cpu | head -4 | awk \'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}\''
     TPMEM='ps aux --sort -%mem | head -4 | awk \'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}\''
     
-    loggerl.info("TopProcess : " + subprocess.run([TPCPU], capture_output=True))
-    loggerl.info("TopProcess : " + subprocess.run([TPMEM], capture_output=True))
+#    loggerl.info("TopProcess : " + subprocess.run([TPCPU], capture_output=True))
+#    loggerl.info("TopProcess : " + subprocess.run([TPMEM], capture_output=True))
 
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
