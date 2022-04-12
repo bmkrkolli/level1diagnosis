@@ -74,9 +74,9 @@ def run_module():
       HAS_PSUTIL = False
 
     module_args = dict(
-        topprocessesbycpu = (type='int', required=False, default=0)
-        topprocessesbymem = (type='int', required=False, default=0)
-        checkfilesystem = (type='str', required=False, default='all')
+      topprocessesbycpu=dict(type='int', required=False, default=0),
+      topprocessesbymem=dict(type='int', required=False, default=0),
+      checkfilesystem=dict(type='str', required=False, default='all')
     )
 
     module = AnsibleModule(
@@ -112,7 +112,7 @@ def run_module():
     OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
       
     if HAS_PSUTIL:
-      if checkfilesystem == 'all':
+      if module_args['checkfilesystem']== 'all':
         for item in psutil.disk_partitions():
           FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
       else:
