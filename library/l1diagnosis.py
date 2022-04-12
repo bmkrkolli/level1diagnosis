@@ -111,8 +111,8 @@ def run_module():
 
     OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
 
-    syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL" + module_args['checkfilesystem'] + " , " + module_args['topprocessesbycpu'] + " , " + module_args['topprocessesbymem'])
-    loggerl.info("Getting Info using PSUTIL" + module_args['checkfilesystem'] + " , " + module_args['topprocessesbycpu'] + " , " + module_args['topprocessesbymem'])
+    syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL")
+    loggerl.info("Getting Info using PSUTIL" + module_args)#['checkfilesystem'] + " , " + module_args['topprocessesbycpu'] + " , " + module_args['topprocessesbymem'])
 
     if HAS_PSUTIL:
       if module_args['checkfilesystem'] == 'all':
