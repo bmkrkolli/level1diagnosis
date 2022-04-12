@@ -110,7 +110,10 @@ def run_module():
           RELEASE_DATA[row[0]] = row[1]
 
     OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
-      
+
+    syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL" + module_args['checkfilesystem'] + " , " + module_args['topprocessesbycpu'] + " , " + module_args['topprocessesbymem'])
+    loggerl.info("Getting Info using PSUTIL" + module_args['checkfilesystem'] + " , " + module_args['topprocessesbycpu'] + " , " + module_args['topprocessesbymem'])
+
     if HAS_PSUTIL:
       if module_args['checkfilesystem'] == 'all':
         for item in psutil.disk_partitions():
@@ -118,9 +121,6 @@ def run_module():
       else:
         for item in psutil.disk_partitions():
           FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
-
-      syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL")
-      loggerl.info("Getting Info using PSUTIL")
 
       last_reboot = psutil.boot_time()
       LBT = datetime.datetime.fromtimestamp(last_reboot)
@@ -137,7 +137,7 @@ def run_module():
           p = psutil.Process(pid=proc.pid)
           processes.append(p.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent']))
 
-      if int(module_args.topprocessesbycpu) >> 0:
+      if int(module_args['topprocessesbycpu']) >> 0:
         cpu = sorted(processes, key=lambda i: i['cpu_percent'], reverse=True)
         count = 0
         
@@ -145,7 +145,7 @@ def run_module():
             count = count + 1
             TPCPU.append(cpu[count])
 
-      if int(module_args.topprocessesbycpu) >> 0:
+      if int(module_args['topprocessesbycpu']) >> 0:
         mem = sorted(processes, key=lambda i: i['memory_percent'], reverse=True)
         count = 0
         while (count < module_args['topprocessesbymem']):   
