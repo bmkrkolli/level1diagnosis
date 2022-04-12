@@ -102,12 +102,6 @@ def run_module():
     HN = platform.node()
     KERNEL = platform.release()
 
-    TPCPU='ps aux --sort -%cpu | head -4 | awk \'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}\''
-    TPMEM='ps aux --sort -%mem | head -4 | awk \'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}\''
-    
-#    loggerl.info("TopProcess : " + subprocess.run([TPCPU], capture_output=True))
-#    loggerl.info("TopProcess : " + subprocess.run([TPMEM], capture_output=True))
-
     with open("/etc/os-release") as file:
       reader = csv.reader(file, delimiter="=")
       for row in reader:
@@ -129,6 +123,26 @@ def run_module():
       CPUS = psutil.cpu_count()
       TMEM = (psutil.virtual_memory().total/1024)/1024
       SWAP = psutil.swap_memory().percent
+
+      processes = []
+      for proc in psutil.process_iter(['pid']):
+          p = psutil.Process(pid=proc.pid)
+          processes.append(p.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent']))
+
+      cpu = sorted(processes, key=lambda i: i['cpu_percent'], reverse=True)
+      count = 0
+      TPCPU = []
+      while (count < 3):   
+          count = count + 1
+          TPCPU.append(cpu[count])
+      TPMEM = []
+      mem = sorted(processes, key=lambda i: i['memory_percent'], reverse=True)
+      count = 0
+      while (count < 3):   
+          count = count + 1
+          TPMEM.append(mem[count])
+
+
       #syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
       
       result['changed'] = False
@@ -136,8 +150,8 @@ def run_module():
       result['failed'] = False
       result['msg'] = "Success"
       result['rc'] = 0
-      result['stdout'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
-      result['stdout_lines'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS}
+      result['stdout'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS, "TopProcesessbyCPU": TPCPU, "TopProcesessbyMEM": TPMEM}
+      result['stdout_lines'] = {"Hostname": HN, "OS": OS, "Version": KERNEL, "LastBootUpTime": LBT, "CPULoadPercent": CPU, "MemoryLoadPercent": MEM, "SWAPLoadPercent": SWAP, "Cores": CPUS, "MemoryMB": TMEM, "FileSystems": FS, "TopProcesessbyCPU": TPCPU, "TopProcesessbyMEM": TPMEM}
     else:
       result['changed'] = False
       result['success'] = False
