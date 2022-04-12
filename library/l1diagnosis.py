@@ -92,11 +92,11 @@ def run_module():
     logger_name = module._syslog_facility
     logger = getattr(syslog, logger_name, syslog.LOG_USER)
     syslog.openlog(str(module), 0, logger)
-    syslog.syslog(syslog.LOG_INFO, "Started on " + module.params['endpoint'])
+#    syslog.syslog(syslog.LOG_INFO, "Started on " + module.params['endpoint'])
 
     logging.basicConfig(filemode='w', level=logging.INFO, format='%(asctime)s  %(levelname)s  %(message)s') #filename='app.log',
     loggerl=logging.getLogger()
-    loggerl.info("Started on " + module.params['endpoint'])
+#    loggerl.info("Started on " + module.params['endpoint'])
 
     RELEASE_DATA = {}
     FS = []
