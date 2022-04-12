@@ -119,8 +119,7 @@ def run_module():
         for item in psutil.disk_partitions():
           FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
       else:
-        for item in psutil.disk_usage(module.params['checkfilesystem']):
-          FS.append({"Mount": module.params['checkfilesystem'], "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
+        FS.append({"Mount": module.params['checkfilesystem'], "UsedPercent": psutil.disk_usage(module.params['checkfilesystem']).percent})
 
       last_reboot = psutil.boot_time()
       LBT = datetime.datetime.fromtimestamp(last_reboot)
