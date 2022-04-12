@@ -141,14 +141,14 @@ def run_module():
         cpu = sorted(processes, key=lambda i: i['cpu_percent'], reverse=True)
         count = 0
         
-        while (count < module_args['topprocessesbycpu']):   
+        while (count < int(module.params['topprocessesbycpu'])):   
             count = count + 1
             TPCPU.append(cpu[count])
 
       if int(module.params['topprocessesbycpu']) >> 0:
         mem = sorted(processes, key=lambda i: i['memory_percent'], reverse=True)
         count = 0
-        while (count < module_args['topprocessesbymem']):   
+        while (count < int(module.params['topprocessesbymem'])):   
             count = count + 1
             TPMEM.append(mem[count])
 
