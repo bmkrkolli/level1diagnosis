@@ -137,7 +137,7 @@ def run_module():
           p = psutil.Process(pid=proc.pid)
           processes.append(p.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent']))
 
-      if int(module_args['topprocessesbycpu']) >> 0:
+      if int(module_args.topprocessesbycpu) >> 0:
         cpu = sorted(processes, key=lambda i: i['cpu_percent'], reverse=True)
         count = 0
         
@@ -145,7 +145,7 @@ def run_module():
             count = count + 1
             TPCPU.append(cpu[count])
 
-      if int(module_args['topprocessesbycpu']) >> 0:
+      if int(module_args.topprocessesbycpu) >> 0:
         mem = sorted(processes, key=lambda i: i['memory_percent'], reverse=True)
         count = 0
         while (count < module_args['topprocessesbymem']):   
