@@ -74,8 +74,9 @@ def run_module():
       HAS_PSUTIL = False
 
     module_args = dict(
-        endpoint=dict(type='str', required=True),
-        sample=dict(type='bool', required=False, default=False)
+        topprocessesbycpu = (type='int', required=False, default=0)
+        topprocessesbymem = (type='int', required=False, default=0)
+        checkfilesystem = (type='str', required=False, default='all')
     )
 
     module = AnsibleModule(
@@ -111,8 +112,13 @@ def run_module():
     OS = RELEASE_DATA["NAME"] + " " + RELEASE_DATA["VERSION"] 
       
     if HAS_PSUTIL:
-      for item in psutil.disk_partitions():
-        FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
+      if checkfilesystem == 'all':
+        for item in psutil.disk_partitions():
+          FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
+      else:
+        for item in psutil.disk_partitions():
+          FS.append({"Mount": item.mountpoint, "UsedPercent": psutil.disk_usage(item.mountpoint).percent})
+
       syslog.syslog(syslog.LOG_INFO, "Getting Info using PSUTIL")
       loggerl.info("Getting Info using PSUTIL")
 
@@ -125,23 +131,26 @@ def run_module():
       SWAP = psutil.swap_memory().percent
 
       processes = []
+      TPCPU = []
+      TPMEM = []
       for proc in psutil.process_iter(['pid']):
           p = psutil.Process(pid=proc.pid)
           processes.append(p.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent']))
 
-      cpu = sorted(processes, key=lambda i: i['cpu_percent'], reverse=True)
-      count = 0
-      TPCPU = []
-      while (count < 3):   
-          count = count + 1
-          TPCPU.append(cpu[count])
-      TPMEM = []
-      mem = sorted(processes, key=lambda i: i['memory_percent'], reverse=True)
-      count = 0
-      while (count < 3):   
-          count = count + 1
-          TPMEM.append(mem[count])
+      if module_args['topprocessesbycpu'] >> 0:
+        cpu = sorted(processes, key=lambda i: i['cpu_percent'], reverse=True)
+        count = 0
+        
+        while (count < module_args['topprocessesbycpu']):   
+            count = count + 1
+            TPCPU.append(cpu[count])
 
+      if module_args['topprocessesbycpu'] >> 0:
+        mem = sorted(processes, key=lambda i: i['memory_percent'], reverse=True)
+        count = 0
+        while (count < module_args['topprocessesbymem']):   
+            count = count + 1
+            TPMEM.append(mem[count])
 
       #syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
       

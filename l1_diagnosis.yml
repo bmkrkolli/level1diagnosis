@@ -6,7 +6,9 @@
   tasks:
     - name: "Python Level 1 Diagnosis"
       l1diagnosis:
-        endpoint: "{{ inventory_hostname }}"
+        topprocessesbycpu: 2
+        topprocessesbymem: 2
+        checkfilesystem: '/'
       register: l1_info
       when: os_type != "Windows"
       ignore_errors: true
