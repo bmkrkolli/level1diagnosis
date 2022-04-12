@@ -129,12 +129,12 @@ def run_module():
       TMEM = (psutil.virtual_memory().total/1024)/1024
       SWAP = psutil.swap_memory().percent
 
-      processes = []
       TPCPU = []
       TPMEM = []
+      processes = []
       for proc in psutil.process_iter(['pid']):
           p = psutil.Process(pid=proc.pid)
-          processes.append(p.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent', 'memory_percent']))
+          processes.append(p.as_dict(attrs=['pid', 'name', 'username', 'cpu_percent']))
 
       if int(module.params['topprocessesbycpu']) >> 0:
         cpu = sorted(processes, key=lambda i: i['cpu_percent'], reverse=True)
@@ -143,6 +143,11 @@ def run_module():
         while (count < int(module.params['topprocessesbycpu'])):   
             count = count + 1
             TPCPU.append(cpu[count])
+
+      processes = []
+      for proc in psutil.process_iter(['pid']):
+          p = psutil.Process(pid=proc.pid)
+          processes.append(p.as_dict(attrs=['pid', 'name', 'username', 'memory_percent']))
 
       if int(module.params['topprocessesbycpu']) >> 0:
         mem = sorted(processes, key=lambda i: i['memory_percent'], reverse=True)
