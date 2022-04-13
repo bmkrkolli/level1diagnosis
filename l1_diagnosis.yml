@@ -29,7 +29,7 @@
         checklogicaldisk: c
         topprocessesbycpu: 3
         topprocessesbymem: 3
-      register: top_l1_info
+      register: win_l1_info
       when: os_type == "Windows"
       ignore_errors: true
 
