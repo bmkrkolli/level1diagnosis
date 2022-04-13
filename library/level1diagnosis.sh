@@ -93,12 +93,14 @@ else
     TC=$((topprocessesbycpu + 1))
     TPCPU=$(ps aux --sort -%cpu | head -${TC} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}')
 fi
+
 if [ -z "$topprocessesbymem" ]; then
     TPMEM=" "
 else
     TM=$((topprocessesbymem + 1))
     TPMEM=$(ps aux --sort -%mem | head -${TM} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}')
 fi
+
 if [ -z "$checkfilesystem" ]; then
     FS=$(df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":\""$6"\"}"}'||echo 'df command not found,')
 else
