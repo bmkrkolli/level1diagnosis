@@ -96,6 +96,7 @@ else
 fi
 if [ -z "$topprocessesbymem" ]; then
     TPMEM=""
+    exit 1
 else
     TM=$((topprocessesbymem + 1))
     echo $TM
