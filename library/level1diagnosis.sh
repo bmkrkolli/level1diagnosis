@@ -110,9 +110,9 @@ STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": \""$CPUS"\", \
 ER="not found"
 if [[ $STDOUTPUT =~ $ER ]];
 then
-    echo "{ \"changed\": false, \"failed\": true, \"success\": false, \"rc\": 1, \"msg\": \"\", \"stderr\": {"$STDOUTPUT"}, \"stderr_lines\": {"$STDOUTPUT"}, \"stdout\": \"\", \"stdout_lines\": \"\" }"
+    echo "{ \"changed\": false, \"failed\": true, \"success\": false, \"rc\": 1, \"msg\": \"\", \"stderr\": {"$STDOUTPUT"}, \"stderr_lines\": {"$STDOUTPUT"}, \"stdout\": \"\", \"stdout_lines\": \"\"}"
     exit 1
 else
-    echo "{ \"changed\": false, \"failed\": false, \"success\": true, \"rc\": 0, \"msg\": \"\", \"stderr\": \"\", \"stderr_lines\": \"\", \"stdout\": {"$STDOUTPUT"}, \"stdout_lines\": {"$STDOUTPUT"} }"
+    echo "{ \"changed\": false, \"failed\": false, \"success\": true, \"rc\": 0, \"msg\": \"\", \"stderr\": \"\", \"stderr_lines\": \"\", \"stdout\": {"$STDOUTPUT"}, \"stdout_lines\": {"$STDOUTPUT"}}"
     exit 0
 fi
