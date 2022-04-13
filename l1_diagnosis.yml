@@ -1,6 +1,6 @@
 ---
 # Level 1 Diagnosis for Windows and Linux
-- hosts: all
+- hosts: all!localhost
   vars:
     os_type: "{{ ansible_facts['os_family'] }}"
   tasks:
