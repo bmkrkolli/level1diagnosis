@@ -6,8 +6,8 @@
   tasks:
     - name: "Python Level 1 Diagnosis"
       l1diagnosis:
-        topprocessesbycpu: 2
-        topprocessesbymem: 2
+        topprocessesbycpu: 3
+        topprocessesbymem: 3
         checkfilesystem: '/'
       register: l1_info
       when: os_type != "Windows"
@@ -21,17 +21,11 @@
         - os_type != "Windows"
       ignore_errors: true
 
-    - name: "win_level1diagnosis Level 1 Diagnosis"
-      win_level1diagnosis: 
-      register: win_l1_info
-      when: os_type == "Windows"
-      ignore_errors: true
-
     - name: "win_level1diagnosis with top Level 1 Diagnosis"
       win_level1diagnosis: 
         topprocessesbycpu: 3
         topprocessesbymem: 3
-        checklogicaldisk: e
+        checklogicaldisk: c
       register: top_l1_info
       when: os_type == "Windows"
       ignore_errors: true
