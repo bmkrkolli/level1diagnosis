@@ -76,7 +76,7 @@ OnFailure:
 }
 '
 source $1
-echo $1
+
 HN=$(uname -n||echo 'uname command not found')
 OS=$(egrep -w "NAME|VERSION" /etc/os-release|awk -F= '{ print $2 }'|sed 's/"//g'||echo '/etc/os-release command not found')
 KERNEL=$(uname -ri||echo 'uname command not found')
@@ -88,25 +88,21 @@ TMEM=$(free -m | grep Mem | awk '{print $2}'||echo 'free command not found')
 SWAP=$(free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found')
 
 if [ -n "$topprocessesbycpu" ]; then
-    TPCPU=""
+    TPCPU=[]
 else
     TC=$((topprocessesbycpu + 1))
-    echo $TC
     TPCPU=$(ps aux --sort -%cpu | head -${TC} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}')
 fi
 if [ -z "$topprocessesbymem" ]; then
-    TPMEM=""
-    exit 1
+    TPMEM=[]
 else
     TM=$((topprocessesbymem + 1))
-    echo $TM
     TPMEM=$(ps aux --sort -%mem | head -${TM} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}')
 fi
 if [ -z "$checkfilesystem" ]; then
     FS=$(df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":\""$6"\"}"}'||echo 'df command not found,')
 else
     CFS=$checkfilesystem
-    echo $CFS
     FS=$(df -TPh $CFS | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":\""$6"\"}"}'||echo 'df command not found,')
 fi
 
