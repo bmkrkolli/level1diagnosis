@@ -87,7 +87,7 @@ CPUS=$(nproc||echo 'nproc command not found')
 TMEM=$(free -m | grep Mem | awk '{print $2}'||echo 'free command not found')
 SWAP=$(free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found')
 
-if [ -n "$topprocessesbycpu" ]; then
+if [ -z "$topprocessesbycpu" ]; then
     TPCPU=" "
 else
     TC=$((topprocessesbycpu + 1))
