@@ -75,7 +75,7 @@ OnFailure:
     "stdout_lines": ""
 }
 '
-
+source $1
 
 HN=$(uname -n||echo 'uname command not found')
 OS=$(egrep -w "NAME|VERSION" /etc/os-release|awk -F= '{ print $2 }'|sed 's/"//g'||echo '/etc/os-release command not found')
@@ -87,8 +87,12 @@ CPUS=$(nproc||echo 'nproc command not found')
 TMEM=$(free -m | grep Mem | awk '{print $2}'||echo 'free command not found')
 SWAP=$(free | grep 'Swap' | awk '{t = $2; f = $4; print (f/t)}'||echo 'free command not found')
 FS=$(df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":\""$6"\"}"}'||echo 'df command not found,')
-TPCPU=$(ps aux --sort -%cpu | head -4 | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}')
-TPMEM=$(ps aux --sort -%mem | head -4 | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}')
+
+TC=$topprocessesbycpu
+TM=$topprocessesbymem
+CFS=$checkfilesystem
+TPCPU=$(ps aux --sort -%cpu | head -${TC} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}')
+TPMEM=$(ps aux --sort -%mem | head -${TM} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}')
 
 STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": \""$CPUS"\", \"MemoryMB\": \""$TMEM"\", \"Version\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"], \"TopProcesessbyCPU\": ["${TPCPU::-1}"], \"TopProcesessbyMEM\": ["${TPMEM::-1}"]"
 

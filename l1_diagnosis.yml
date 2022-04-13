@@ -15,8 +15,8 @@
 
     - name: "level1diagnosis Level 1 Diagnosis"
       level1diagnosis:
-        topprocessesbycpu: 3
-        topprocessesbymem: 3
+        topprocessesbycpu: 2
+        topprocessesbymem: 2
         checkfilesystem: '/'
       register: linux_l1_info
       when: 
