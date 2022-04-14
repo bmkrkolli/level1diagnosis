@@ -142,7 +142,7 @@ def run_module():
         
         while (count < int(module.params['topprocessesbycpu'])):   
             count = count + 1
-            TPCPU.append(cpu[count])
+            TPCPU.append(cpu[count]['pid'])
 
       processes = []
       for proc in psutil.process_iter(['pid']):
@@ -154,7 +154,7 @@ def run_module():
         count = 0
         while (count < int(module.params['topprocessesbymem'])):   
             count = count + 1
-            TPMEM.append(mem[count])
+            TPMEM.append(mem[count]['name'])
 
       #syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
       
