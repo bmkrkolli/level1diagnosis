@@ -91,14 +91,14 @@ if [ -z "$topprocessesbycpu" ]; then
     TPCPU=" "
 else
     TC=$((topprocessesbycpu + 1))
-    TPCPU=$(ps aux --sort -%cpu | head -${TC} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":\""$3"\"}"}')
+    TPCPU=$(ps aux --sort -%cpu | head -${TC} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"ProcessName\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":"$3"}"}')
 fi
 
 if [ -z "$topprocessesbymem" ]; then
     TPMEM=" "
 else
     TM=$((topprocessesbymem + 1))
-    TPMEM=$(ps aux --sort -%mem | head -${TM} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"CMD\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":\""$4"\"}"}')
+    TPMEM=$(ps aux --sort -%mem | head -${TM} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"ProcessName\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":"$4"}"}')
 fi
 
 if [ -z "$checkfilesystem" ]; then
