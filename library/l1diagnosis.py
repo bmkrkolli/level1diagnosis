@@ -142,7 +142,8 @@ def run_module():
         
         while (count < int(module.params['topprocessesbycpu'])):   
             count = count + 1
-            TPCPU.append("{'ProcessID': " + cpu[count]['pid'] + ", 'ProcessName': '" + cpu[count]['name'] + "', 'CPUPercent': " + cpu[count]['cpu_percent'] + ", 'User': '" + cpu[count]['username'] + "'}")
+            tpc = {'ProcessID': cpu[count]['pid'] , 'ProcessName': cpu[count]['name'] , 'CPUPercent': cpu[count]['cpu_percent'] , 'User': cpu[count]['username'] }
+            TPCPU.append(tpc)
 
       processes = []
       for proc in psutil.process_iter(['pid']):
@@ -154,7 +155,8 @@ def run_module():
         count = 0
         while (count < int(module.params['topprocessesbymem'])):   
             count = count + 1
-            TPMEM.append("{'ProcessID': " + mem[count]['pid'] + ", 'ProcessName': '" + mem[count]['name'] + "', 'MemoryPercent': " + mem[count]['memory_percent'] + ", 'User': '" + mem[count]['username'] + "'}")
+            tpm = {'ProcessID': mem[count]['pid'] , 'ProcessName': mem[count]['name'] , 'MemoryPercent': mem[count]['memory_percent'] , 'User': mem[count]['username'] }
+            TPMEM.append(tpm)
 
       #syslog.syslog(syslog.LOG_INFO, "Printing Results " + inventory_hostname)
       
