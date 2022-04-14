@@ -62,7 +62,7 @@ try {
     };
 
     $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; Version = $os.Version + " " + $os.OSArchitecture;
-      LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores; CPULoadPercent = $cpu; 
+      LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = [int]$cores; CPULoadPercent = $cpu; 
       MemoryMB = $tm; MemoryLoadPercent = $um; SWAPLoadPercent = $pct; FileSystems = $dsk; TopProcesessbyCPU = $tpcpu; TopProcesessbyMEM = $tpmem }; 
 
     $result = @{
