@@ -19,15 +19,15 @@ try {
     $am = $mem.AvailableMBytes;
     $tpm = (get-wmiobject Win32_ComputerSystem).TotalPhysicalMemory
     $tm = get-wmiobject Win32_ComputerSystem | ForEach-Object{[Math]::Round($_.TotalPhysicalMemory/1MB)};
-    $um = [Math]::Round(100-(($am/$tm)*100));
+    $um = [Math]::Round(100 - (($am * 100)/$tm), 2);
     $pageinfo = get-wmiobject Win32_PageFileUsage;
     $pct = [Math]::Round(($pageinfo.CurrentUsage/$pageinfo.AllocatedBaseSize)*100,2);
     if($checklogicaldisk -eq "all"){
-        $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={([Math]::Round(($_.FreeSpace * 100)/$_.Size, 2))}};
+        $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={100 - ([Math]::Round(($_.FreeSpace * 100)/$_.Size, 2))}};
     } else {
         $checklogicaldisk = $checklogicaldisk + ":";
         if(get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'"){
-            $dsk = get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={([Math]::Round(($_.FreeSpace * 100)/$_.Size, 2))}};;
+            $dsk = get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={100 - ([Math]::Round(($_.FreeSpace * 100)/$_.Size, 2))}};;
         } else {
             $dsk = "$checklogicaldisk Drive not found"
         };
