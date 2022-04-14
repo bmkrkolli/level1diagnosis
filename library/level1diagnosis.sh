@@ -91,14 +91,14 @@ if [ -z "$topprocessesbycpu" ]; then
     TPCPU=" "
 else
     TC=$((topprocessesbycpu + 1))
-    TPCPU=$(ps aux --sort -%cpu | head -${TC} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"ProcessName\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":"$3"}"}')
+    TPCPU=$(ps aux --sort -%cpu | head -${TC} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":"$2", \"ProcessName\":\""$11"\", \"User\":\""$1"\", \"CPUPercent\":"$3"}"}')
 fi
 
 if [ -z "$topprocessesbymem" ]; then
     TPMEM=" "
 else
     TM=$((topprocessesbymem + 1))
-    TPMEM=$(ps aux --sort -%mem | head -${TM} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":\""$2"\", \"ProcessName\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":"$4"}"}')
+    TPMEM=$(ps aux --sort -%mem | head -${TM} | awk 'BEGIN {ORS=","} NR>1{print "{\"ProcessID\":"$2", \"ProcessName\":\""$11"\", \"User\":\""$1"\", \"MemoryPercent\":"$4"}"}')
 fi
 
 if [ -z "$checkfilesystem" ]; then
@@ -108,7 +108,7 @@ else
     FS=$(df -TPh $CFS | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":\""$6"\"}"}'||echo 'df command not found,')
 fi
 
-STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": \""$CPUS"\", \"MemoryMB\": \""$TMEM"\", \"Version\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"], \"TopProcesessbyCPU\": ["${TPCPU::-1}"], \"TopProcesessbyMEM\": ["${TPMEM::-1}"]"
+STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": "$CPUS", \"MemoryMB\": "$TMEM", \"Version\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"], \"TopProcesessbyCPU\": ["${TPCPU::-1}"], \"TopProcesessbyMEM\": ["${TPMEM::-1}"]"
 
 ER="not found"
 if [[ $STDOUTPUT =~ $ER ]]; then

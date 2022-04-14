@@ -14,7 +14,7 @@ try {
     $os = get-wmiobject Win32_OperatingSystem;
     $lbt = $os.ConverttoDateTime($os.LastBootupTime);
     $cpu = get-wmiobject win32_processor | Measure-Object -property LoadPercentage -Average | ForEach-Object{$_.Average};
-    $cores = get-wmiobject Win32_ComputerSystem;
+    $cores = $env:NUMBER_OF_PROCESSORS;
     $mem = get-wmiobject Win32_PerfFormattedData_PerfOS_Memory; 
     $am = $mem.AvailableMBytes;
     $tpm = (get-wmiobject Win32_ComputerSystem).TotalPhysicalMemory
@@ -38,7 +38,7 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='CPUPercent';E={(($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/100/$env:NUMBER_OF_PROCESSORS)}},
+            @{L='CPUPercent';E={[Math]::Round((($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/100/$cores), 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending CPU | 
             Select -First $topprocessesbycpu;
@@ -52,7 +52,7 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='MemoryPercent';E={(($_.Group |? Path -like '*\Working Set' |% CookedValue)/100/$tpm)}},
+            @{L='MemoryPercent';E={[Math]::Round((($_.Group |? Path -like '*\Working Set' |% CookedValue)/100/$tpm), 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending Memory | 
             Select -First $topprocessesbymem;
@@ -62,7 +62,7 @@ try {
     };
 
     $l1 = New-Object psobject -Property @{Hostname = $os.CSName; OS = $os.Caption; Version = $os.Version + " " + $os.OSArchitecture;
-      LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores.NumberOfProcessors; CPULoadPercent = $cpu; 
+      LastBootUpTime = ($lbt.DateTime).replace(",",""); Cores = $cores; CPULoadPercent = $cpu; 
       MemoryMB = $tm; MemoryLoadPercent = $um; SWAPLoadPercent = $pct; FileSystems = $dsk; TopProcesessbyCPU = $tpcpu; TopProcesessbyMEM = $tpmem }; 
 
     $result = @{
