@@ -42,7 +42,7 @@ try {
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending CPU | 
             Select -First $topprocessesbycpu;
-        $tpcpu | Select ProcessID,ProcessName,CPUPercent,@{l="User"; e={$pd=$_.ProcessID; get-wmiobject win32_process -Filter "ProcessId='$pd'" | %{$_.getowner().user}}}
+        $tpcpu = $tpcpu | Select ProcessID,ProcessName,CPUPercent,@{l="User"; e={$pd=$_.ProcessID; get-wmiobject win32_process -Filter "ProcessId='$pd'" | %{$_.getowner().user}}}
     } else {
         $tpcpu = "";
     };
@@ -56,7 +56,7 @@ try {
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending Memory | 
             Select -First $topprocessesbymem;
-        $tpmem | Select ProcessID,ProcessName,MemoryPercent,@{l="User"; e={$pd=$_.ProcessID; get-wmiobject win32_process -Filter "ProcessId='$pd'" | %{$_.getowner().user}}}
+        $tpmem = $tpmem | Select ProcessID,ProcessName,MemoryPercent,@{l="User"; e={$pd=$_.ProcessID; get-wmiobject win32_process -Filter "ProcessId='$pd'" | %{$_.getowner().user}}}
     } else {
         $tpmem = "";
     };
