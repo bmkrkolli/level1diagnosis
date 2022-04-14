@@ -42,7 +42,7 @@ try {
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending CPU | 
             Select -First $topprocessesbycpu;
-        $tpcpu | Add-Member -Name "User" -Value {get-wmiobject win32_process -Filter "ProcessId='$_.ProcessId'" | %{$_.getowner().user}}
+        $tpcpu | %{$usr = get-wmiobject win32_process -Filter "ProcessId='$_.ProcessId'" | %{$_.getowner().user}; Add-Member -Name "User" -Value $usr}
     } else {
         $tpcpu = "";
     };
@@ -56,7 +56,7 @@ try {
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending Memory | 
             Select -First $topprocessesbymem;
-        $tpmem | Add-Member -Name "User" -Value {get-wmiobject win32_process -Filter "ProcessId='$_.ProcessId'" | %{$_.getowner().user}}
+        $tpmem | %{$usr = get-wmiobject win32_process -Filter "ProcessId='$_.ProcessId'" | %{$_.getowner().user}; Add-Member -Name "User" -Value $usr}
     } else {
         $tpmem = "";
     };
