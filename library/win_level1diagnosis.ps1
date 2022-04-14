@@ -1,5 +1,7 @@
 #!powershell
 #Requires -Module Ansible.ModuleUtils.Legacy
+#Requires -Module Ansible.ModuleUtils.CommandUtil
+#Requires -Module Ansible.ModuleUtils.FileUtil
 
 $params = Parse-Args $args -supports_check_mode $true
 $check_mode = Get-AnsibleParam -obj $params -name '_ansible_check_mode' -type 'bool' -default $false
@@ -15,6 +17,7 @@ try {
     $cores = get-wmiobject Win32_ComputerSystem;
     $mem = get-wmiobject Win32_PerfFormattedData_PerfOS_Memory; 
     $am = $mem.AvailableMBytes;
+    $tpm = (get-wmiobject Win32_ComputerSystem).TotalPhysicalMemory
     $tm = get-wmiobject Win32_ComputerSystem | ForEach-Object{[Math]::Round($_.TotalPhysicalMemory/1MB)};
     $um = [Math]::Round(100-(($am/$tm)*100));
     $pageinfo = get-wmiobject Win32_PageFileUsage;
@@ -35,10 +38,11 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='CPU';E={(($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/100/$env:NUMBER_OF_PROCESSORS).toString('P')}},
+            @{L='CPUPercent';E={(($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/100/$env:NUMBER_OF_PROCESSORS)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending CPU | 
             Select -First $topprocessesbycpu;
+        $tpcpu = $tpcpu | Select ProcessId,ProcessName,CPUPercent,@{l="User";e={get-wmiobject win32_process -Filter "ProcessId='$_.ProcessId'" | %{$_.getowner().user}}}
     } else {
         $tpcpu = "";
     };
@@ -48,10 +52,11 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='Memory';E={$_.Group |? Path -like '*\Working Set' |% CookedValue}},
+            @{L='MemoryPercent';E={(($_.Group |? Path -like '*\Working Set' |% CookedValue)/100/$tpm)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending Memory | 
             Select -First $topprocessesbymem;
+        $tpmem = $tpmem | Select ProcessId,ProcessName,CPUPercent,@{l="User";e={get-wmiobject win32_process -Filter "ProcessId='$_.ProcessId'" | %{$_.getowner().user}}}
     } else {
         $tpmem = "";
     };
