@@ -102,10 +102,10 @@ else
 fi
 
 if [ -z "$checkfilesystem" ]; then
-    FS=$(df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":"$6"}"}'||echo 'df command not found,')
+    FS=$(df -TPh -x squashfs -x tmpfs -x devtmpfs | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":"$6" }"}'||echo 'df command not found,')
 else
     CFS=$checkfilesystem
-    FS=$(df -TPh $CFS | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":"$6"}"}'||echo 'df command not found,')
+    FS=$(df -TPh $CFS | awk 'BEGIN {ORS=","} NR>1{print "{\"Mount\":\""$7"\", \"UsedPercent\":"$6" }"}'||echo 'df command not found,')
 fi
 
 STDOUTPUT="\"Hostname\": \""$HN"\", \"OS\": \""$OS"\", \"Cores\": "$CPUS", \"MemoryMB\": "$TMEM", \"Version\": \""$KERNEL"\", \"LastBootUpTime\":\""$LBT"\", \"CPULoadPercent\": "$CPU", \"MemoryLoadPercent\": "$MEM", \"SWAPLoadPercent\": "$SWAP", \"Filesystems\": ["${FS::-1}"], \"TopProcesessbyCPU\": ["${TPCPU::-1}"], \"TopProcesessbyMEM\": ["${TPMEM::-1}"]"
