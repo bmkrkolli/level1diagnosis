@@ -40,7 +40,7 @@ try {
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
             @{L='CPUPercent';E={[Math]::Round((($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/100/$cores), 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
-            Sort-Object -Descending CPU | 
+            Sort-Object -Descending CPUPercent | 
             Select -First $topprocessesbycpu;
         $tpcpu = $tpcpu | Select ProcessID,ProcessName,CPUPercent,@{l="User"; e={$pd=$_.ProcessID; get-wmiobject win32_process -Filter "ProcessId='$pd'" | %{$_.getowner().user}}}
     } else {
@@ -54,7 +54,7 @@ try {
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
             @{L='MemoryPercent';E={[Math]::Round((($_.Group |? Path -like '*\Working Set' |% CookedValue)/100/$tpm), 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
-            Sort-Object -Descending Memory | 
+            Sort-Object -Descending MemoryPercent | 
             Select -First $topprocessesbymem;
         $tpmem = $tpmem | Select ProcessID,ProcessName,MemoryPercent,@{l="User"; e={$pd=$_.ProcessID; get-wmiobject win32_process -Filter "ProcessId='$pd'" | %{$_.getowner().user}}}
     } else {
