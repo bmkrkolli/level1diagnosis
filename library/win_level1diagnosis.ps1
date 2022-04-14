@@ -38,7 +38,7 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='CPUPercent';E={[Math]::Round(100 - (($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/$cores)*100, 2)}},
+            @{L='CPUPercent';E={[Math]::Round((($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/$cores)*100, 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending CPUPercent | 
             Select -First $topprocessesbycpu;
@@ -52,7 +52,7 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='MemoryPercent';E={[Math]::Round(100 - (($_.Group |? Path -like '*\Working Set' |% CookedValue)/$tpm)*100, 2)}},
+            @{L='MemoryPercent';E={[Math]::Round((($_.Group |? Path -like '*\Working Set' |% CookedValue)/$tpm)*100, 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending MemoryPercent | 
             Select -First $topprocessesbymem;
