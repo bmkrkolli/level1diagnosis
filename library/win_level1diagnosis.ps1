@@ -23,11 +23,11 @@ try {
     $pageinfo = get-wmiobject Win32_PageFileUsage;
     $pct = [Math]::Round(($pageinfo.CurrentUsage/$pageinfo.AllocatedBaseSize)*100,2);
     if($checklogicaldisk -eq "all"){
-        $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};
+        $dsk = get-wmiobject Win32_LogicalDisk -Filter "DriveType='3'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={([Math]::Round(($_.FreeSpace * 100)/$_.Size, 2))}};
     } else {
         $checklogicaldisk = $checklogicaldisk + ":";
         if(get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'"){
-            $dsk = get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={(100 - [Math]::Round(($_.FreeSpace/$_.Size)*100, 2))}};;
+            $dsk = get-wmiobject Win32_LogicalDisk -Filter "DeviceId='$checklogicaldisk'" | Select-Object Name, @{LABEL='UsedPercent'; EXPRESSION={([Math]::Round(($_.FreeSpace * 100)/$_.Size, 2))}};;
         } else {
             $dsk = "$checklogicaldisk Drive not found"
         };
@@ -38,7 +38,7 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='CPUPercent';E={[Math]::Round((($_.Group |? Path -like '*\% Processor Time' |% CookedValue)/$cores)*100, 2)}},
+            @{L='CPUPercent';E={[Math]::Round((($_.Group |? Path -like '*\% Processor Time' |% CookedValue) * 100)/$cores, 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending CPUPercent | 
             Select -First $topprocessesbycpu;
@@ -52,7 +52,7 @@ try {
             Where-Object InstanceName -NotMatch '^(?:idle|_total|system)$' | 
             Group-Object {Split-Path $_.Path} | 
             Select @{L='ProcessName';E={[regex]::matches($_.Name,'.*process\((.*)\)').groups[1].value}},
-            @{L='MemoryPercent';E={[Math]::Round((($_.Group |? Path -like '*\Working Set' |% CookedValue)/$tpm)*100, 2)}},
+            @{L='MemoryPercent';E={[Math]::Round((($_.Group |? Path -like '*\Working Set' |% CookedValue) * 100)/$tpm, 2)}},
             @{L='ProcessId';E={$_.Group | ? Path -like '*\ID Process' | % RawValue}} | 
             Sort-Object -Descending MemoryPercent | 
             Select -First $topprocessesbymem;
