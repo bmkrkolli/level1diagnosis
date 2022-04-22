@@ -67,14 +67,14 @@
       no_log: true
 
     - name: Send message to slack
-      slack:
+      local_action:
+        module: slack
         token: "{{ slack_token }}"
         attachments:
           - text: "{{ hostvars[inventory_hostname]['job_msg'] }}" 
             title: Launched {{ tower_job_id }}
         channel: "automation"
         domain: "app.slack.com"
-      delegate_to: localhost
       ignore_errors: true
 
     - name: stats
